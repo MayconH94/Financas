@@ -1,0 +1,185 @@
+:root {
+  --bg: #f4f5f7;
+  --card: #ffffff;
+  --texto: #1f2937;
+  --suave: #6b7280;
+  --borda: #e5e7eb;
+  --receita: #16a34a;
+  --despesa: #dc2626;
+  --destaque: #2563eb;
+
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  color: var(--texto);
+  background: var(--bg);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  display: grid;
+  gap: 16px;
+}
+
+/* topo */
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.topo h1 { margin: 0; font-size: 1.4rem; }
+.topo label { display: grid; gap: 4px; font-size: 0.8rem; color: var(--suave); }
+
+/* cartões */
+.card {
+  background: var(--card);
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  padding: 16px;
+}
+.card h2 { margin: 0 0 12px; font-size: 1rem; }
+
+.cards-resumo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.cards-resumo .card span { font-size: 0.8rem; color: var(--suave); }
+.cards-resumo .card strong { display: block; margin-top: 4px; font-size: 1.2rem; }
+
+.positivo { color: var(--receita); }
+.negativo { color: var(--despesa); }
+
+/* campos */
+input, select, button { font: inherit; }
+input, select {
+  padding: 8px 10px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--texto);
+}
+input:focus, select:focus {
+  outline: 2px solid var(--destaque);
+  outline-offset: 1px;
+}
+
+/* formulário */
+.formulario {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.formulario h2,
+.formulario .campo-largo,
+.formulario button,
+.formulario .erro { grid-column: 1 / -1; }
+
+.btn-primario {
+  padding: 10px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--destaque);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-primario:hover { filter: brightness(1.1); }
+
+.erro { margin: 0; color: var(--despesa); font-size: 0.9rem; }
+
+/* resumo por categoria */
+.categoria { margin-bottom: 12px; }
+.categoria-linha {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+.barra { height: 10px; background: var(--borda); border-radius: 999px; overflow: hidden; }
+.barra-preenchida { height: 100%; background: var(--destaque); border-radius: 999px; }
+.vazio { margin: 0; color: var(--suave); }
+
+/* lista */
+.lista { list-style: none; margin: 0; padding: 0; }
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--borda);
+}
+.item:last-child { border-bottom: 0; }
+.item-info { flex: 1; min-width: 0; }
+.item-info strong { display: block; }
+.item-info small { color: var(--suave); }
+.item-valor { font-weight: 600; white-space: nowrap; }
+.btn-remover {
+  border: 0;
+  background: none;
+  color: var(--suave);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.btn-remover:hover { color: var(--despesa); }
+
+/* celular */
+@media (max-width: 560px) {
+  .cards-resumo { grid-template-columns: 1fr; }
+  .formulario { grid-template-columns: 1fr; }
+}
+
+.login {display: grid; gap: 12px; max-width: 380px; margin: 48px auto 0; width: 100%; }
+.login h1 { margin: 0; font-size: 1.3rem;}
+.login button:disabled {opacity: 0.6; cursor: wait;}
+
+/* ===== página de login com imagem de fundo ===== */
+.login-pagina {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 24px clamp(16px, 8vw, 120px);
+  background-color: #020b24;
+  background-image: url("/login-bg.png");
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+}
+
+/* cartão em vidro escuro, combinando com a imagem */
+.login-pagina .login {
+  margin: 0;
+  background: rgba(6, 18, 48, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(94, 234, 212, 0.25);
+  color: #e6f1ff;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.login-pagina .login input {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+.login-pagina .login input::placeholder { color: #8aa0c4; }
+
+.login-pagina .vazio { color: #9fb3d9; }
+.login-pagina .btn-primario { background: linear-gradient(90deg, #10b981, #2563eb); }
+.login-pagina .btn-remover { color: #9fb3d9; }
+.login-pagina .btn-remover:hover { color: #fff; }
+.login-pagina .erro { color: #fca5a5; }
+.login-pagina .positivo { color: #6ee7b7; }
+
+/* celular: cartão centralizado e imagem deslocada */
+@media (max-width: 760px) {
+  .login-pagina {
+    justify-content: center;
+    background-position: 75% center;
+  }
+}
