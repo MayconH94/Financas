@@ -1,8 +1,11 @@
+
 import { useState } from "react";
 import { calcularSaldo, formatarMoeda } from "./utils/dinheiro";
 import { useTransacoes } from "./hooks/useTransacoes";
 import FormularioTransacao from "./components/FormularioTransacao";
 import ResumoCategorias from "./components/ResumoCategorias";
+import IconeCategoria from "./components/IconeCategoria";
+
 
 const mesAtual = () => new Date().toLocaleDateString("sv-SE").slice(0, 7); // AAAA-MM
 
@@ -26,68 +29,89 @@ export default function Painel({ email, onSair }: Props) {
     .filter((t) => t.tipo === "despesa")
     .reduce((soma, t) => soma + t.valorEmCentavos, 0);
 
-  return (
-    <div className="app">
-      <header className="topo">
-        <h1>Visão geral financeira</h1>
-        <label>
-          Mês
-          <input type="month" value={mes} onChange={(e) => setMes(e.target.value)} />
-        </label>
-        <div>
-          <small className="vazio">{email}</small>{" "}
-          <button className="btn-remover" onClick={onSair}>Sair</button>
-        </div>
-      </header>
+  const saldo = calcularSaldo(doMes);
 
-      <section className="cards-resumo">
-        <div className="card">
-          <span>Saldo do mês</span>
-          <strong className={calcularSaldo(doMes) < 0 ? "negativo" : ""}>
-            {formatarMoeda(calcularSaldo(doMes))}
-          </strong>
+    return (
+    <div className="shell">
+      <aside className="sidebar">
+        <div className="marca">
+          <span className="marca-logo">$</span>
+          <span>Gestão Financeira</span>
         </div>
-        <div className="card">
-          <span>Receitas</span>
-          <strong className="positivo">{formatarMoeda(receitas)}</strong>
+
+        <nav className="menu">
+          <button className="menu-item ativo">Visão geral</button>
+        </nav>
+
+        <div className="sidebar-rodape">
+          <small>{email}</small>
+          <button className="btn-sair" onClick={onSair}>Sair</button>
         </div>
-        <div className="card">
-          <span>Despesas</span>
-          <strong className="negativo">{formatarMoeda(despesas)}</strong>
-        </div>
-      </section>
+      </aside>
 
-      <ResumoCategorias transacoes={doMes} />
+      <main className="conteudo">
+        <header className="topo">
+          <div>
+            <h1>Dashboard</h1>
+            <p className="subtitulo">Visão geral das suas finanças</p>
+          </div>
+          <label className="seletor-mes">
+            Mês
+            <input type="month" value={mes} onChange={(e) => setMes(e.target.value)} />
+          </label>
+        </header>
 
-      <FormularioTransacao onAdicionar={adicionar} />
+        <section className="grade-topo">
+          <div className="card card-destaque">
+            <span className="rotulo">Saldo do mês</span>
+            <strong className={`valor-grande ${saldo < 0 ? "negativo" : ""}`}>
+              {formatarMoeda(saldo)}
+            </strong>
+          </div>
+          <div className="card">
+            <span className="rotulo">Receitas</span>
+            <strong className="valor-grande positivo">{formatarMoeda(receitas)}</strong>
+          </div>
+          <div className="card">
+            <span className="rotulo">Despesas</span>
+            <strong className="valor-grande negativo">{formatarMoeda(despesas)}</strong>
+          </div>
+        </section>
 
-      <section className="card">
-        <h2>Transações</h2>
-        {erro && <p className="erro">{erro}</p>}
-        {carregando ? (
-          <p className="vazio">Carregando…</p>
-        ) : doMes.length === 0 ? (
-          <p className="vazio">Nenhuma transação neste mês.</p>
-        ) : (
-          <ul className="lista">
-            {doMes.map((t) => (
-              <li key={t.id} className="item">
-                <div className="item-info">
-                  <strong>{t.descricao}</strong>
-                  <small>{t.data} · {t.categoria}</small>
-                </div>
-                <span className={`item-valor ${t.tipo === "despesa" ? "negativo" : "positivo"}`}>
-                  {t.tipo === "despesa" ? "-" : "+"}
-                  {formatarMoeda(t.valorEmCentavos)}
-                </span>
-                <button className="btn-remover" onClick={() => remover(t.id)}>
-                  Remover
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+        <section className="grade-meio">
+          <ResumoCategorias transacoes={doMes} />
+          <FormularioTransacao onAdicionar={adicionar} />
+        </section>
+
+        <section className="card">
+          <h2>Transações recentes</h2>
+          {erro && <p className="erro">{erro}</p>}
+          {carregando ? (
+            <p className="vazio">Carregando…</p>
+          ) : doMes.length === 0 ? (
+            <p className="vazio">Nenhuma transação neste mês.</p>
+          ) : (
+            <ul className="lista">
+              {doMes.map((t) => (
+                <li key={t.id} className="item">
+                  <IconeCategoria categoria={t.categoria} />
+                    <div className="item-info">
+                      <strong>{t.descricao}</strong>
+                      <small>{t.data} · {t.categoria}</small>
+                  </div>
+                  <span className={`item-valor ${t.tipo === "despesa" ? "negativo" : "positivo"}`}>
+                    {t.tipo === "despesa" ? "-" : "+"}
+                    {formatarMoeda(t.valorEmCentavos)}
+                  </span>
+                  <button className="btn-remover" onClick={() => remover(t.id)}>
+                    Remover
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </main>
     </div>
   );
 }

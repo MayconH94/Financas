@@ -1,13 +1,9 @@
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type CSSProperties } from "react";
 import type { Transacao } from "../types/transacao";
 import { converterParaCentavos } from "../utils/dinheiro";
+import { CATEGORIA, LISTA_CATEGORIA, type Categoria } from "../utils/categorias";
 
-type Categoria = Transacao["categoria"];
 type NovaTransacao = Omit<Transacao, "id">;
-
-const CATEGORIAS: Categoria[] = [
-  "Salário", "Moradia", "Alimentação", "Transporte", "Lazer", "Saúde", "Educação", "Outros",
-];
 
 type Props = {
   onAdicionar: (dados: NovaTransacao) => void;
@@ -53,17 +49,29 @@ export default function FormularioTransacao({ onAdicionar }: Props) {
       <input placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
       <input placeholder="Valor (ex.: 38,95)" value={valor} onChange={(e) => setValor(e.target.value)} inputMode="decimal" />
       <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
-      <select value={categoria} onChange={(e) => setCategoria(e.target.value as Categoria)}>
-        {CATEGORIAS.map((c) => (
-          <option key={c} value={c}>{c}</option>
-        ))}
-      </select>
+      <div className="seletor-categorias">
+      {LISTA_CATEGORIA.map((c) => {
+    const { icone: Icone, cor } = CATEGORIA[c];
+      return (
+      <button
+        type="button"
+        key={c}
+        className={`chip-cat ${categoria === c ? "ativo" : ""}`}
+        style={{ "--cor": cor } as CSSProperties}
+        onClick={() => setCategoria(c)}
+     >
+        <Icone size={18}/>
+        <span>{c}</span>
+      </button>
+    );
+  })}
+</div>
       <select value={tipo} onChange={(e) => setTipo(e.target.value as "receita" | "despesa")}>
         <option value="despesa">Despesa</option>
         <option value="receita">Receita</option>
       </select>
-      <button type="submit">Adicionar</button>
-      {erro && <p style={{ color: "crimson" }}>{erro}</p>}
+      <button type="submit" className="btn-primario">Adicionar</button>
+      {erro && <p className="erro">{erro}</p>}
     </form>
   );
-}
+};

@@ -1,5 +1,7 @@
 import type { Transacao } from "../types/transacao";
 import { formatarMoeda } from "../utils/dinheiro";
+import IconeCategoria from "./IconeCategoria";
+import { CATEGORIA, type Categoria } from "../utils/categorias";
 
 type Props = {
   transacoes: Transacao[];
@@ -7,7 +9,7 @@ type Props = {
 
 export default function ResumoCategorias({ transacoes }: Props) {
   // 1. Soma as despesas de cada categoria
-  const totais = new Map<string, number>();
+  const totais = new Map<Categoria, number>();
   for (const t of transacoes) {
     if (t.tipo !== "despesa") continue;
     totais.set(t.categoria, (totais.get(t.categoria) ?? 0) + t.valorEmCentavos);
@@ -36,16 +38,22 @@ export default function ResumoCategorias({ transacoes }: Props) {
         const percentual = (total / totalGeral) * 100;
         return (
           <div key={categoria} className="categoria">
-            <div className="categoria-linha">
-              <span>{categoria}</span>
-              <span>
-                {formatarMoeda(total)} ({percentual.toFixed(0)}%)
-              </span>
-            </div>
-            <div className="barra">
-              <div className="barra-preenchida" style={{ width: `${percentual}%` }} />
-            </div>
-          </div>
+          <div className="categoria-linha">
+            <span className="categoria-nome">
+            <IconeCategoria categoria={categoria} tamanho={14} />
+            {categoria}
+            </span>
+            <span>
+            {formatarMoeda(total)} ({percentual.toFixed(0)}%)
+        </span>
+  </div>
+  <div className="barra">
+    <div
+      className="barra-preenchida"
+      style={{ width: `${percentual}%`, background: CATEGORIA[categoria].cor }}
+    />
+  </div>
+</div>
         );
       })}
     </section>
