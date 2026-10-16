@@ -28,7 +28,8 @@ export default function Avatar({ usuario }: Props) {
       .upload(caminho, arquivo, { upsert: true, contentType: arquivo.type });
     if (error) {
       setEnviando(false);
-      return setErro("Não foi possível enviar a foto.");
+      console.error("Erro no upload:", error);
+        return setErro(`Não foi possível enviar a foto: ${error.message}`);
     }  
 
         const { data } = supabase.storage.from("avatares").getPublicUrl(caminho);
