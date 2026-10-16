@@ -5,16 +5,19 @@ import { useTransacoes } from "./hooks/useTransacoes";
 import FormularioTransacao from "./components/FormularioTransacao";
 import ResumoCategorias from "./components/ResumoCategorias";
 import IconeCategoria from "./components/IconeCategoria";
+import type { User } from "@supabase/supabase-js";
+import Avatar from "./components/Avatar";
 
 
 const mesAtual = () => new Date().toLocaleDateString("sv-SE").slice(0, 7); // AAAA-MM
 
 type Props = {
+  usuario: User;
   email: string;
-  onSair: () => void;
+  onSair: () => void; 
 };
 
-export default function Painel({ email, onSair }: Props) {
+export default function Painel({ usuario, email, onSair }: Props) {
   const { transacoes, carregando, erro, adicionar, remover } = useTransacoes();
   const [mes, setMes] = useState(mesAtual());
 
@@ -45,6 +48,7 @@ export default function Painel({ email, onSair }: Props) {
 
         <div className="sidebar-rodape">
           <small>{email}</small>
+          <Avatar usuario={usuario}/>
           <button className="btn-sair" onClick={onSair}>Sair</button>
         </div>
       </aside>

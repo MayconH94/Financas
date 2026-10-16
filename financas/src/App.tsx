@@ -10,9 +10,6 @@ export default function App() {
   if (!sessao) return <Login />;
 
   return (
-    <Painel
-      email={sessao.user.email ?? ""}
-      onSair={() => supabase.auth.signOut()}
-    />
+    <Painel usuario={sessao.user} email={sessao.user.email ?? ""} onSair={() => supabase.auth.signOut()} />
   );
 }
