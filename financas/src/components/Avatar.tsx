@@ -21,7 +21,7 @@ export default function Avatar({ usuario }: Props) {
         if (arquivo.size > 2 * 1024 * 1024) return setErro("Maximo de 2 MB");
 
         setEnviando(true);
-        const caminho = `${usuario}/avatar`;
+        const caminho = `${usuario.id}/avatar`;
 
         const { error } = await supabase.storage
       .from("avatares")
