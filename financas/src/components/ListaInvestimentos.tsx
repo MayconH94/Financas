@@ -1,9 +1,11 @@
 import type { Investimento } from "../types/investimento";
+import { calcularPosicao } from "../utils/carteira";
 import { formatarMoeda } from "../utils/dinheiro";
 import { TIPOS } from "../utils/tiposInvestimento";
 
 type Props = {
   investimentos: Investimento[];
+  cotacoes: Map<string, number>;
   onRemover: (id: string) => Promise<void>;
 };
 
@@ -11,7 +13,7 @@ function dataBR(iso: string) {
   return iso.split("-").reverse().join("/");
 }
 
-export default function ListaInvestimentos({ investimentos, onRemover }: Props) {
+export default function ListaInvestimentos({ investimentos, cotacoes, onRemover }: Props) {
   return (
     <section className="card">
       <h2>Minha carteira</h2>
@@ -22,6 +24,7 @@ export default function ListaInvestimentos({ investimentos, onRemover }: Props) 
         <ul className="lista">
           {investimentos.map((i) => {
             const { rotulo, icone: Icone, cor } = TIPOS[i.tipo];
+            const pos = calcularPosicao(i, cotacoes);
             return (
               <li key={i.id} className="item item-investimento">
                 <span
@@ -45,8 +48,15 @@ export default function ListaInvestimentos({ investimentos, onRemover }: Props) 
 
                 <div className="item-valores">
                   <strong>{formatarMoeda(i.valorInvestidoEmCentavos)}</strong>
-                  {i.valorAtualEmCentavos !== null && (
-                    <small>hoje {formatarMoeda(i.valorAtualEmCentavos)}</small>
+                  {pos.atualEmCentavos !== null && (
+                    <small>hoje {formatarMoeda(pos.atualEmCentavos)}</small>
+                  )}
+                  {pos.resultadoEmCentavos !== null && (
+                    <small className={pos.resultadoEmCentavos >= 0 ? "positivo" : "negativo"}>
+                      {pos.resultadoEmCentavos >= 0 ? "+" : ""}
+                      {formatarMoeda(pos.resultadoEmCentavos)}
+                      {pos.percentual !== null && ` (${pos.percentual.toFixed(1).replace(".", ",")}%)`}
+                    </small>
                   )}
                 </div>
 

@@ -14,3 +14,8 @@ export type Investimento = {
 };
 
 export type NovoInvestimento = Omit<Investimento, "id">;
+
+export type Cotacao = {
+  codigo: string;
+  precoEmCentavos: number;
+};
