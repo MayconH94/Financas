@@ -182,3 +182,20 @@
     border-right-color: var(--border);
   }
 }
+
+.menu { display: grid; gap: 6px; }
+.menu .menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--suave);
+  text-align: left;
+  cursor: pointer;
+}
+.menu .menu-item:hover { color: var(--texto); background: rgba(255, 255, 255, 0.04); }
+.menu .menu-item.ativo { color: var(--lima); background: rgba(163, 230, 53, 0.1); }

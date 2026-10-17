@@ -320,3 +320,13 @@ input:focus, select:focus {
   transition: opacity 0.15s;
 }
 .avatar:hover .avatar-editar { opacity: 1; }
+
+.span-2 { grid-column: 1 / -1; }
+.seletor-categorias.tres { grid-template-columns: repeat(3, 1fr); }
+
+.campo { display: grid; gap: 4px; font-size: 0.8rem; color: var(--suave); }
+
+.item-investimento { display: flex; align-items: center; gap: 12px; }
+.item-info { flex: 1; display: grid; gap: 2px; min-width: 0; }
+.item-info small, .item-valores small { color: var(--suave); }
+.item-valores { display: grid; justify-items: end; gap: 2px; }

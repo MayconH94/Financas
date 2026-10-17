@@ -7,7 +7,9 @@ import ResumoCategorias from "./components/ResumoCategorias";
 import IconeCategoria from "./components/IconeCategoria";
 import type { User } from "@supabase/supabase-js";
 import Avatar from "./components/Avatar";
-
+import { ABAS, type Aba } from "./utils/abas";
+import PaginaEmBreve from "./components/PaginaEmBreve";
+import PaginaInvestimentos from "./components/PaginaInvestimentos";
 
 const mesAtual = () => new Date().toLocaleDateString("sv-SE").slice(0, 7); // AAAA-MM
 
@@ -20,6 +22,7 @@ type Props = {
 export default function Painel({ usuario, email, onSair }: Props) {
   const { transacoes, carregando, erro, adicionar, remover } = useTransacoes();
   const [mes, setMes] = useState(mesAtual());
+  const [aba, setAba] = useState<Aba>("visao");
 
   const doMes = transacoes
     .filter((t) => t.data.startsWith(mes))
@@ -43,8 +46,18 @@ export default function Painel({ usuario, email, onSair }: Props) {
         </div>
 
         <nav className="menu">
-          <button className="menu-item ativo">Visão geral</button>
-        </nav>
+  {ABAS.map(({ id, nome, icone: Icone }) => (
+    <button
+      key={id}
+      type="button"
+      className={`menu-item ${aba === id ? "ativo" : ""}`}
+      onClick={() => setAba(id)}
+    >
+      <Icone size={18} />
+      {nome}
+    </button>
+  ))}
+</nav>
 
         <div className="sidebar-rodape">
           <small>{email}</small>
@@ -54,6 +67,8 @@ export default function Painel({ usuario, email, onSair }: Props) {
       </aside>
 
       <main className="conteudo">
+        {aba === "visao" && (
+        <>
         <header className="topo">
           <div>
             <h1>Dashboard</h1>
@@ -115,6 +130,18 @@ export default function Painel({ usuario, email, onSair }: Props) {
             </ul>
           )}
         </section>
+        </>
+        )}
+
+        {aba === "transacoes" && (
+          <PaginaEmBreve titulo="Transações" descricao="Lista completa com busca e filtros. Em breve." />
+        )}
+
+        {aba === "relatorios" && (
+          <PaginaEmBreve titulo="Relatórios" descricao="Gráficos de receitas e despesas por mês. Em breve." />
+        )}
+
+        {aba === "investimentos" && <PaginaInvestimentos />}
       </main>
     </div>
   );
