@@ -4,6 +4,29 @@ import { supabase } from "../lib/supabase";
 
 type Props = {usuario: User};
 
+// Recorta no centro, deixa quadrada (512 px no máximo) e salva como JPEG leve.
+async function reduzirImagem(arquivo: File, lado = 512): Promise<Blob> {
+    const imagem = await createImageBitmap(arquivo, { imageOrientation: "from-image" });
+    const menor = Math.min(imagem.width, imagem.height);
+    const x = (imagem.width - menor) / 2;
+    const y = (imagem.height - menor) / 2;
+    const tamanho = Math.min(lado, menor);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = tamanho;
+    canvas.height = tamanho;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("canvas indisponível");
+    ctx.fillStyle = "#0b1224"; // fundo para PNGs com transparência
+    ctx.fillRect(0, 0, tamanho, tamanho);
+    ctx.drawImage(imagem, x, y, menor, menor, 0, 0, tamanho, tamanho);
+    imagem.close();
+
+    return new Promise((resolver, falhar) => {
+        canvas.toBlob((blob) => (blob ? resolver(blob) : falhar(new Error("falha ao converter"))), "image/jpeg", 0.85);
+    });
+}
+
 export default function Avatar({ usuario }: Props) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [url, setUrl] = useState<string | null>(usuario.user_metadata?.avatar_url ?? null);
@@ -14,18 +37,27 @@ export default function Avatar({ usuario }: Props) {
     async function aoEscolher(e: ChangeEvent<HTMLInputElement>) {
         const arquivo = e.target.files?.[0];
         if (!arquivo) return;
+        e.target.value = ""; // permite escolher a mesma foto de novo
         setErro("");
 
 
-        if (!arquivo.type.startsWith("image/")) return setErro("Escolher uma imagem.");
-        if (arquivo.size > 2 * 1024 * 1024) return setErro("Maximo de 2 MB");
+        if (!arquivo.type.startsWith("image/")) return setErro("Escolha uma imagem.");
+        if (arquivo.size > 25 * 1024 * 1024) return setErro("A foto passa de 25 MB.");
 
         setEnviando(true);
         const caminho = `${usuario.id}/avatar`;
 
+        let imagem: Blob;
+        try {
+            imagem = await reduzirImagem(arquivo);
+        } catch {
+            setEnviando(false);
+            return setErro("Não consegui ler essa foto. Use JPG ou PNG.");
+        }
+
         const { error } = await supabase.storage
       .from("avatares")
-      .upload(caminho, arquivo, { upsert: true, contentType: arquivo.type });
+      .upload(caminho, imagem, { upsert: true, contentType: "image/jpeg" });
     if (error) {
       setEnviando(false);
       console.error("Erro no upload:", error);
