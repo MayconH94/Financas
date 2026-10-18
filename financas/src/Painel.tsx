@@ -9,7 +9,7 @@ import type { User } from "@supabase/supabase-js";
 import Avatar from "./components/Avatar";
 import NomeUsuario from "./components/NomeUsuario";
 import { ABAS, type Aba } from "./utils/abas";
-import PaginaEmBreve from "./components/PaginaEmBreve";
+import PaginaTransacoes from "./components/PaginaTransacoes";
 import PaginaInvestimentos from "./components/PaginaInvestimentos";
 import PaginaRelatorios from "./components/PaginaRelatorios";
 
@@ -139,9 +139,7 @@ export default function Painel({ usuario, email, onSair }: Props) {
 
          
 
-        {aba === "transacoes" && (
-          <PaginaEmBreve titulo="Transações" descricao="Lista completa com busca e filtros. Em breve." />
-        )}
+        {aba === "transacoes" && <PaginaTransacoes transacoes={transacoes} onRemover={remover} />}
 
         {aba === "relatorios" && <PaginaRelatorios transacoes={transacoes} />}
 

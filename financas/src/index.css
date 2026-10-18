@@ -487,3 +487,62 @@ input:focus, select:focus {
   }
   .item-investimento > .btn-remover { grid-area: remover; align-self: end; padding: 6px 0 6px 12px; }
 }
+
+/* ===== aba transações ===== */
+.pagina-transacoes { display: grid; gap: 20px; align-content: start; }
+.filtros { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 10px; }
+.filtros input, .filtros select {
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--borda);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--texto);
+  font: inherit;
+  font-size: 0.9rem;
+}
+.transacoes-resumo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  margin-top: 14px;
+  font-size: 0.9rem;
+  color: var(--suave);
+}
+.btn-link { border: 0; background: none; color: var(--lima); cursor: pointer; font: inherit; text-decoration: underline; padding: 0; }
+.item-acoes { display: flex; gap: 6px; }
+.btn-acao {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--borda);
+  background: none;
+  color: var(--suave);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.btn-acao:hover { color: var(--texto); }
+.btn-acao.perigo { color: var(--despesa); border-color: rgba(251, 113, 133, 0.5); }
+.btn-acao.mais { margin-top: 14px; width: 100%; }
+
+@media (max-width: 760px) {
+  .filtros { grid-template-columns: 1fr 1fr; }
+  .filtros .filtro-busca { grid-column: 1 / -1; }
+}
+@media (max-width: 560px) {
+  .item-transacao {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    grid-template-areas:
+      "icone info valor"
+      ". acoes acoes";
+    gap: 6px 12px;
+    align-items: center;
+  }
+  .item-transacao > :first-child { grid-area: icone; }
+  .item-transacao > .item-info { grid-area: info; }
+  .item-transacao > .item-valor { grid-area: valor; }
+  .item-transacao > .item-acoes { grid-area: acoes; justify-content: flex-end; }
+  .item-acoes .btn-acao { padding: 10px 16px; }
+}

@@ -1,7 +1,7 @@
 import { supabase } from "./lib/supabase";
 import { useSessao } from "./hooks/useSessao";
-import Login from "./components/login";
-import Painel from "./painel";
+import Login from "./components/Login";
+import Painel from "./Painel";
 
 export default function App() {
   const { sessao, carregando } = useSessao();
