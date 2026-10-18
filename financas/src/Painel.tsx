@@ -10,6 +10,7 @@ import Avatar from "./components/Avatar";
 import NomeUsuario from "./components/NomeUsuario";
 import { ABAS, type Aba } from "./utils/abas";
 import PaginaTransacoes from "./components/PaginaTransacoes";
+import PaginaConversor from "./components/PaginaConversor";
 import PaginaInvestimentos from "./components/PaginaInvestimentos";
 import PaginaRelatorios from "./components/PaginaRelatorios";
 
@@ -144,6 +145,8 @@ export default function Painel({ usuario, email, onSair }: Props) {
         {aba === "relatorios" && <PaginaRelatorios transacoes={transacoes} />}
 
         {aba === "investimentos" && <PaginaInvestimentos />}
+
+        {aba === "conversor" && <PaginaConversor />}
       </main>
     </div>
   );
