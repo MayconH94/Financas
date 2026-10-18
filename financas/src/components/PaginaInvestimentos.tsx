@@ -15,6 +15,8 @@ export default function PaginaInvestimentos() {
     (soma, i) => soma + (calcularPosicao(i, cotacoes).resultadoEmCentavos ?? 0),
     0
   );
+  const rotuloResultado =
+    totalResultado > 0 ? "Lucro" : totalResultado < 0 ? "Prejuízo" : "Lucro / Prejuízo";
   const tiposDiferentes = new Set(investimentos.map((i) => i.tipo)).size;
 
   return (
@@ -25,9 +27,9 @@ export default function PaginaInvestimentos() {
           <p className="valor-grande">{formatarMoeda(totalInvestido)}</p>
         </div>
         <div className="card">
-          <p className="rotulo">Resultado</p>
+          <p className="rotulo">{rotuloResultado}</p>
           <p className={`valor-grande ${totalResultado >= 0 ? "positivo" : "negativo"}`}>
-            {formatarMoeda(totalResultado)}
+            {formatarMoeda(Math.abs(totalResultado))}
           </p>
         </div>
         <div className="card">
