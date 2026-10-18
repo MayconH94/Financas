@@ -464,3 +464,26 @@ input:focus, select:focus {
   cursor: pointer;
 }
 .nome-erro { flex-basis: 100%; color: var(--despesa); font-size: 0.75rem; }
+
+/* ===== lista de investimentos no celular ===== */
+@media (max-width: 560px) {
+  .item-investimento {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    grid-template-areas:
+      "icone info info"
+      ". valores remover";
+    gap: 8px 12px;
+    align-items: start;
+  }
+  .item-investimento > .icone-cat { grid-area: icone; }
+  .item-investimento > .item-info { grid-area: info; }
+  .item-investimento > .item-valores {
+    grid-area: valores;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 12px;
+  }
+  .item-investimento > .btn-remover { grid-area: remover; align-self: end; padding: 6px 0 6px 12px; }
+}
