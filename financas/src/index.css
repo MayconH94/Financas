@@ -350,3 +350,117 @@ input:focus, select:focus {
 }
 .menu .menu-item:hover { color: var(--texto); background: rgba(255, 255, 255, 0.04); }
 .menu .menu-item.ativo { color: var(--lima); background: rgba(163, 230, 53, 0.1); }
+
+.grafico-card {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  display: grid;
+  gap: 8px;
+}
+.grafico-card h2 { margin: 0; font-size: 1rem; }
+.grafico-sub { margin: 0; color: var(--suave); font-size: 0.85rem; }
+.barras { width: 100%; height: auto; }
+.barras-grupo { cursor: pointer; }
+.barras-fundo { fill: transparent; }
+.barras-fundo.sel { fill: rgba(255, 255, 255, 0.05); }
+.barra-receita { fill: var(--receita); }
+.barra-despesa { fill: var(--despesa); }
+.barras-linha { stroke: rgba(255, 255, 255, 0.15); stroke-width: 1; }
+.barras-rotulo { fill: var(--suave); font-size: 10px; }
+.grafico-detalhe { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.9rem; }
+/* ===== consumo dos últimos 6 meses ===== */
+.coluna-esquerda { display: grid; gap: 16px; }
+.consumo-card {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  display: grid;
+  gap: 10px;
+}
+.consumo-card h2 { margin: 0; font-size: 1rem; }
+.consumo-sub, .consumo-vazio { margin: 0; color: var(--suave); font-size: 0.85rem; }
+.consumo-rosca { width: 100%; max-width: 200px; justify-self: center; }
+.consumo-rotulo { fill: var(--suave); font-size: 5px; }
+.consumo-valor { fill: var(--texto); font-size: 7px; font-weight: 700; }
+.consumo-legenda { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.consumo-legenda li { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+.consumo-ponto { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.consumo-nome { flex: 1; }
+.consumo-pct { color: var(--suave); }
+
+/* ===== celular: cabeçalho enxuto + barra de abas embaixo ===== */
+@media (max-width: 760px) {
+  .sidebar .menu {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+    background: rgba(9, 14, 28, 0.96);
+    border-top: 1px solid var(--borda);
+    backdrop-filter: blur(8px);
+  }
+  .sidebar .menu .menu-item {
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
+    padding: 8px 2px;
+    font-size: 0.7rem;
+    text-align: center;
+    border-radius: 10px;
+  }
+  .conteudo { padding-bottom: 88px; } /* para a barra não cobrir o fim da página */
+  .sidebar-rodape .avatar-bloco { margin-bottom: 0; }
+  .sidebar-rodape .avatar { width: 36px; height: 36px; font-size: 1rem; }
+}
+
+/* ===== relatórios ===== */
+.relatorios { display: grid; gap: 20px; align-content: start; }
+.relatorios .consumo-card { max-width: 640px; }
+
+/* ===== nome do usuário ===== */
+.marca { min-width: 0; }
+.nome-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--texto);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.nome-texto { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nome-btn svg { flex: none; color: var(--suave); }
+.nome-btn:hover svg { color: var(--lima); }
+.nome-form { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.nome-form input {
+  width: 110px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--texto);
+  font: inherit;
+  font-size: 0.9rem;
+}
+.nome-form button {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  background: none;
+  color: var(--lima);
+  cursor: pointer;
+}
+.nome-erro { flex-basis: 100%; color: var(--despesa); font-size: 0.75rem; }

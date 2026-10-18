@@ -11,6 +11,7 @@ function traduzir(mensagem: string): string {
 
 export default function Login() {
   const [modo, setModo] = useState<"entrar" | "criar">("entrar");
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
@@ -27,7 +28,11 @@ export default function Login() {
       const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
       if (error) setErro(traduzir(error.message));
     } else {
-      const { data, error } = await supabase.auth.signUp({ email, password: senha });
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password: senha,
+        options: { data: { nome: nome.trim() } },
+      });
       if (error) setErro(traduzir(error.message));
       else if (!data.session) setAviso("Conta criada! Confirme seu e-mail para entrar.");
     }
@@ -46,6 +51,17 @@ export default function Login() {
           {modo === "entrar" ? "Entre na sua conta" : "Crie sua conta"}
         </p>
 
+        {modo === "criar" && (
+          <input
+            type="text"
+            placeholder="Seu nome"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            autoComplete="given-name"
+            maxLength={30}
+            required
+          />
+        )}
         <input
           type="email"
           placeholder="E-mail"

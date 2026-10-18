@@ -7,9 +7,11 @@ import ResumoCategorias from "./components/ResumoCategorias";
 import IconeCategoria from "./components/IconeCategoria";
 import type { User } from "@supabase/supabase-js";
 import Avatar from "./components/Avatar";
+import NomeUsuario from "./components/NomeUsuario";
 import { ABAS, type Aba } from "./utils/abas";
 import PaginaEmBreve from "./components/PaginaEmBreve";
 import PaginaInvestimentos from "./components/PaginaInvestimentos";
+import PaginaRelatorios from "./components/PaginaRelatorios";
 
 const mesAtual = () => new Date().toLocaleDateString("sv-SE").slice(0, 7); // AAAA-MM
 
@@ -42,7 +44,7 @@ export default function Painel({ usuario, email, onSair }: Props) {
       <aside className="sidebar">
         <div className="marca">
           <span className="marca-logo">$</span>
-          <span>Gestão Financeira</span>
+          <NomeUsuario usuario={usuario} />
         </div>
 
         <nav className="menu">
@@ -98,7 +100,9 @@ export default function Painel({ usuario, email, onSair }: Props) {
         </section>
 
         <section className="grade-meio">
-          <ResumoCategorias transacoes={doMes} />
+          <div className="coluna-esquerda">
+            <ResumoCategorias transacoes={doMes} />
+          </div>
           <FormularioTransacao onAdicionar={adicionar} />
         </section>
 
@@ -133,13 +137,13 @@ export default function Painel({ usuario, email, onSair }: Props) {
         </>
         )}
 
+         
+
         {aba === "transacoes" && (
           <PaginaEmBreve titulo="Transações" descricao="Lista completa com busca e filtros. Em breve." />
         )}
 
-        {aba === "relatorios" && (
-          <PaginaEmBreve titulo="Relatórios" descricao="Gráficos de receitas e despesas por mês. Em breve." />
-        )}
+        {aba === "relatorios" && <PaginaRelatorios transacoes={transacoes} />}
 
         {aba === "investimentos" && <PaginaInvestimentos />}
       </main>
