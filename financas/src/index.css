@@ -764,3 +764,15 @@ input:focus, select:focus {
 @media (max-width: 760px) {
   .aviso-atualizacao { left: 12px; right: 12px; bottom: 88px; justify-content: space-between; }
 }
+
+/* ==== celular: impedir a pagina de ficar mais larga que a tela ==== */
+
+html, body { max-width: 100%; overflow-x: hidden ;}
+
+@media (max-width: 760px) {
+  .shell {grid-template-columns: minmax(0, 1fr);}
+  .conteudo {min-width: 0; max-width: 100%;}
+  .conteudo > * {min-width: 0;}
+  .grade-meio {grid-template-columns: minmax();}
+  .card {min-width: 0;}
+}
