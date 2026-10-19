@@ -5,7 +5,11 @@ const CACHE = `financas-${VERSAO}`;
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.add("/")));
-  self.skipWaiting();
+  // a versão nova espera o usuário tocar em "Atualizar" (mensagem abaixo)
+});
+
+self.addEventListener("message", (e) => {
+  if (e.data && e.data.tipo === "PULAR_ESPERA") self.skipWaiting();
 });
 
 self.addEventListener("activate", (e) => {

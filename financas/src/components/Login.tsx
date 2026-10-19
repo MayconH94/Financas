@@ -45,7 +45,7 @@ export default function Login() {
 
     <div className="login-pagina">
       <form className="card login" onSubmit={aoEnviar}>
-        <h1>GESTÃO FINANCEIRA</h1>
+        <h1>FinFlow</h1>
         <h2>Seu controle financeiro na palma da sua mão</h2>
         <p className="vazio">
           {modo === "entrar" ? "Entre na sua conta" : "Crie sua conta"}

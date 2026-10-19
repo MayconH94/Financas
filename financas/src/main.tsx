@@ -2,16 +2,15 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import AvisoAtualizacao from './components/AvisoAtualizacao.tsx'
+import { registrarServiceWorker } from './utils/pwa.ts'
 
 // PWA: registra o service worker só no site publicado (não no npm run dev)
-if ("serviceWorker" in navigator && import.meta.env.PROD) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
-  });
-}
+registrarServiceWorker()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
+    <AvisoAtualizacao />
   </StrictMode>,
 )
