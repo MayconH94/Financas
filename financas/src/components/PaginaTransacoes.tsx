@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Transacao } from "../types/transacao";
 import { LISTA_CATEGORIA, type Categoria } from "../utils/categorias";
 import { formatarMoeda } from "../utils/dinheiro";
+import SeletorMes from "./SeletorMes";
 import IconeCategoria from "./IconeCategoria";
 
 type Props = {
@@ -104,14 +105,12 @@ export default function PaginaTransacoes({ transacoes, onRemover }: Props) {
               </option>
             ))}
           </select>
-          <input
-            type="month"
-            value={mes}
-            onChange={(e) => {
-              setMes(e.target.value);
+          <SeletorMes
+            valor={mes}
+            onChange={(novo) => {
+              setMes(novo);
               setLimite(POR_PAGINA);
             }}
-            aria-label="Filtrar por mês"
           />
         </div>
 

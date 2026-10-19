@@ -399,24 +399,27 @@ input:focus, select:focus {
     right: 0;
     bottom: 0;
     z-index: 20;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0;
+    display: flex;
+    gap: 4px;
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     background: rgba(9, 14, 28, 0.96);
     border-top: 1px solid var(--borda);
     backdrop-filter: blur(8px);
   }
   .sidebar .menu .menu-item {
+    flex: 1 1 0;
     flex-direction: column;
     justify-content: center;
     gap: 4px;
     min-width: 0;
-    padding: 8px 2px;
-    font-size: 0.64rem;
+    padding: 10px 2px;
+    font-size: 0.68rem;
     text-align: center;
     border-radius: 10px;
   }
+  .sidebar .menu .menu-item.ativo { flex: 2.4 1 0; }
+  .sidebar .menu .menu-item:not(.ativo) .menu-rotulo { display: none; }
+  .menu-rotulo { white-space: nowrap; }
   .conteudo { padding-bottom: 88px; } /* para a barra não cobrir o fim da página */
   .sidebar-rodape .avatar-bloco { margin-bottom: 0; }
   .sidebar-rodape .avatar { width: 36px; height: 36px; font-size: 1rem; }
@@ -582,4 +585,126 @@ input:focus, select:focus {
 @media (max-width: 560px) {
   .conversor-moedas { grid-template-columns: 1fr; justify-items: stretch; }
   .conversor-inverter { justify-self: center; }
+}
+
+/* ===== carrossel de dicas ===== */
+.dicas-card {
+  min-width: 0;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(163, 230, 53, 0.25);
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.22), rgba(30, 27, 75, 0.5));
+  display: grid;
+  gap: 12px;
+}
+.dicas-topo { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.dicas-topo h2 { margin: 0; font-size: 1rem; }
+.btn-link { background: none; border: none; color: var(--lima); font: inherit; cursor: pointer; }
+.dicas-trilho {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 6px;
+  scrollbar-width: none;
+}
+.dicas-trilho::-webkit-scrollbar { display: none; }
+.dica-chip {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 240px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--texto);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.dica-chip:hover { border-color: var(--lima); }
+.dica-chip svg { flex: none; color: var(--lima); }
+.dica-chip span { display: grid; gap: 2px; min-width: 0; }
+.dica-chip small { color: var(--suave); }
+
+/* ===== aba aprender ===== */
+.aprender { display: grid; gap: 12px; align-content: start; }
+.aprender h1 { margin: 0; font-size: 1.6rem; }
+.aprender-aviso { margin: 4px 0 0; color: var(--suave); font-size: 0.85rem; }
+.aprender-item {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+}
+.aprender-cab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  border: none;
+  color: var(--texto);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.aprender-titulo { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.aprender-titulo small { color: var(--suave); }
+.aprender-nivel {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(163, 230, 53, 0.12);
+  color: var(--lima);
+}
+.aprender-corpo { padding: 0 16px 16px; display: grid; gap: 10px; color: var(--suave); }
+.aprender-corpo ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; }
+.aprender-corpo a { color: var(--lima); display: inline-flex; align-items: center; gap: 6px; }
+
+/* ===== celular: Receitas e Despesas lado a lado ===== */
+@media (max-width: 760px) {
+  .grade-topo { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grade-topo .card-destaque { grid-column: 1 / -1; }
+  .grade-topo .card { padding: 14px; }
+  .grade-topo .valor-grande { font-size: 1.3rem; }
+  .grade-topo .card-destaque .valor-grande { font-size: 1.9rem; }
+}
+
+/* ===== seletor de mês (pt-BR) ===== */
+.mes-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+}
+.mes-nav strong { min-width: 130px; text-align: center; font-size: 0.9rem; color: var(--texto); }
+.mes-nav button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texto);
+  cursor: pointer;
+}
+.mes-nav button:hover { background: rgba(255, 255, 255, 0.08); }
+
+/* ===== celular: título e mês na mesma linha ===== */
+@media (max-width: 760px) {
+  .topo { flex-wrap: nowrap; align-items: center; }
+  .topo .subtitulo { display: none; }
+  .topo .seletor-mes > span { display: none; }
+  .mes-nav { padding: 2px; }
+  .mes-nav strong { min-width: 0; padding: 0 4px; font-size: 0.82rem; white-space: nowrap; }
+  .mes-nav button { width: 28px; height: 28px; }
 }

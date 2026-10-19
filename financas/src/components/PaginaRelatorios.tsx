@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Transacao } from "../types/transacao";
+import SeletorMes from "./SeletorMes";
 import ConsumoSeisMeses from "./ConsumoSeisMeses";
 
 type Props = { transacoes: Transacao[] };
@@ -14,10 +15,7 @@ export default function PaginaRelatorios({ transacoes }: Props) {
           <h1>Relatórios</h1>
           <p className="subtitulo">Análise das suas despesas</p>
         </div>
-        <label className="seletor-mes">
-          Até o mês
-          <input type="month" value={mes} onChange={(e) => setMes(e.target.value)} />
-        </label>
+        <SeletorMes rotulo="Até o mês" valor={mes} onChange={setMes} />
       </header>
 
       <ConsumoSeisMeses transacoes={transacoes} mesFinal={mes} />

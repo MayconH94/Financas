@@ -13,6 +13,9 @@ import PaginaTransacoes from "./components/PaginaTransacoes";
 import PaginaConversor from "./components/PaginaConversor";
 import PaginaInvestimentos from "./components/PaginaInvestimentos";
 import PaginaRelatorios from "./components/PaginaRelatorios";
+import SeletorMes from "./components/SeletorMes";
+import CarroselDicas from "./components/CarroselDicas";
+import PaginaAprender from "./components/PaginaAprender";
 
 const mesAtual = () => new Date().toLocaleDateString("sv-SE").slice(0, 7); // AAAA-MM
 
@@ -26,6 +29,12 @@ export default function Painel({ usuario, email, onSair }: Props) {
   const { transacoes, carregando, erro, adicionar, remover } = useTransacoes();
   const [mes, setMes] = useState(mesAtual());
   const [aba, setAba] = useState<Aba>("visao");
+  const [dicaAberta, setDicaAberta] = useState<string | null>(null);
+
+  function abrirDica(id: string | null) {
+    setDicaAberta(id);
+    setAba("aprender");
+  }
 
   const doMes = transacoes
     .filter((t) => t.data.startsWith(mes))
@@ -55,9 +64,11 @@ export default function Painel({ usuario, email, onSair }: Props) {
       type="button"
       className={`menu-item ${aba === id ? "ativo" : ""}`}
       onClick={() => setAba(id)}
+      title={nome}
+      aria-label={nome}
     >
       <Icone size={18} />
-      {nome}
+      <span className="menu-rotulo">{nome}</span>
     </button>
   ))}
 </nav>
@@ -77,10 +88,7 @@ export default function Painel({ usuario, email, onSair }: Props) {
             <h1>Dashboard</h1>
             <p className="subtitulo">Visão geral das suas finanças</p>
           </div>
-          <label className="seletor-mes">
-            Mês
-            <input type="month" value={mes} onChange={(e) => setMes(e.target.value)} />
-          </label>
+          <SeletorMes rotulo="Mês" valor={mes} onChange={setMes} />
         </header>
 
         <section className="grade-topo">
@@ -99,6 +107,8 @@ export default function Painel({ usuario, email, onSair }: Props) {
             <strong className="valor-grande negativo">{formatarMoeda(despesas)}</strong>
           </div>
         </section>
+
+        <CarroselDicas onAbrir={abrirDica} />
 
         <section className="grade-meio">
           <div className="coluna-esquerda">
@@ -147,6 +157,10 @@ export default function Painel({ usuario, email, onSair }: Props) {
         {aba === "investimentos" && <PaginaInvestimentos />}
 
         {aba === "conversor" && <PaginaConversor />}
+
+        {aba === "aprender" && (
+          <PaginaAprender key={dicaAberta ?? "todas"} abertaInicial={dicaAberta} />
+        )}
       </main>
     </div>
   );
