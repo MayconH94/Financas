@@ -4,10 +4,12 @@ import { LISTA_CATEGORIA, type Categoria } from "../utils/categorias";
 import { formatarMoeda } from "../utils/dinheiro";
 import SeletorMes from "./SeletorMes";
 import IconeCategoria from "./IconeCategoria";
+import EditarTransacao from "./EditarTransacao";
 
 type Props = {
   transacoes: Transacao[];
   onRemover: (id: string) => Promise<void>;
+  onEditar: (id: string, dados: Omit<Transacao, "id">) => Promise<boolean>;
 };
 
 const POR_PAGINA = 50;
@@ -21,13 +23,14 @@ function normalizar(texto: string) {
   return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
-export default function PaginaTransacoes({ transacoes, onRemover }: Props) {
+export default function PaginaTransacoes({ transacoes, onRemover, onEditar }: Props) {
   const [busca, setBusca] = useState("");
   const [tipo, setTipo] = useState<"todos" | "receita" | "despesa">("todos");
   const [categoria, setCategoria] = useState<Categoria | "todas">("todas");
   const [mes, setMes] = useState(""); // vazio = todos os meses
   const [limite, setLimite] = useState(POR_PAGINA);
   const [confirmando, setConfirmando] = useState<string | null>(null);
+  const [editando, setEditando] = useState<Transacao | null>(null);
 
   const termo = normalizar(busca.trim());
 
@@ -167,9 +170,14 @@ export default function PaginaTransacoes({ transacoes, onRemover }: Props) {
                       </button>
                     </>
                   ) : (
-                    <button type="button" className="btn-acao" onClick={() => setConfirmando(t.id)}>
-                      Remover
-                    </button>
+                    <>
+                      <button type="button" className="btn-acao" onClick={() => setEditando(t)}>
+                        Editar
+                      </button>
+                      <button type="button" className="btn-acao" onClick={() => setConfirmando(t.id)}>
+                        Remover
+                      </button>
+                    </>
                   )}
                 </div>
               </li>
@@ -183,6 +191,15 @@ export default function PaginaTransacoes({ transacoes, onRemover }: Props) {
           </button>
         )}
       </section>
+
+      {editando && (
+        <EditarTransacao
+          key={editando.id}
+          transacao={editando}
+          onSalvar={(dados) => onEditar(editando.id, dados)}
+          onFechar={() => setEditando(null)}
+        />
+      )}
     </div>
   );
 }

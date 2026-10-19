@@ -85,5 +85,29 @@ export function useTransacoes() {
     setTransacoes((atual) => atual.filter((t) => t.id !== id));
   }
 
-  return { transacoes, carregando, erro, adicionar, remover };
+  async function editar(id: string, dados: NovaTransacao): Promise<boolean> {
+    setErro("");
+    const { data, error } = await supabase
+      .from("transacoes")
+      .update({
+        descricao: dados.descricao,
+        valor_em_centavos: dados.valorEmCentavos,
+        data: dados.data,
+        categoria: dados.categoria,
+        tipo: dados.tipo,
+      })
+      .eq("id", id)
+      .select(COLUNAS)
+      .single();
+
+    if (error) {
+      setErro("Não foi possível editar a transação.");
+      return false;
+    }
+    const atualizada = deLinha(data as Linha);
+    setTransacoes((atual) => atual.map((t) => (t.id === id ? atualizada : t)));
+    return true;
+  }
+
+  return { transacoes, carregando, erro, adicionar, editar, remover };
 }

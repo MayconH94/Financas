@@ -26,7 +26,7 @@ type Props = {
 };
 
 export default function Painel({ usuario, email, onSair }: Props) {
-  const { transacoes, carregando, erro, adicionar, remover } = useTransacoes();
+  const { transacoes, carregando, erro, adicionar, editar, remover } = useTransacoes();
   const [mes, setMes] = useState(mesAtual());
   const [aba, setAba] = useState<Aba>("visao");
   const [dicaAberta, setDicaAberta] = useState<string | null>(null);
@@ -150,7 +150,7 @@ export default function Painel({ usuario, email, onSair }: Props) {
 
          
 
-        {aba === "transacoes" && <PaginaTransacoes transacoes={transacoes} onRemover={remover} />}
+        {aba === "transacoes" && <PaginaTransacoes transacoes={transacoes} onRemover={remover} onEditar={editar} />}
 
         {aba === "relatorios" && <PaginaRelatorios transacoes={transacoes} />}
 
