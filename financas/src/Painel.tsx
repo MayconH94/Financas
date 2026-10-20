@@ -16,6 +16,9 @@ import PaginaRelatorios from "./components/PaginaRelatorios";
 import SeletorMes from "./components/SeletorMes";
 import CarroselDicas from "./components/CarroselDicas";
 import PaginaAprender from "./components/PaginaAprender";
+import PaginaParcelas from "./components/PaginaParcelas";
+import { useParcelamentos } from "./hooks/useParcelamentos";
+import { parcelasComoTransacoes } from "./utils/parcelamentos";
 
 const mesAtual = () => new Date().toLocaleDateString("sv-SE").slice(0, 7); // AAAA-MM
 
@@ -27,6 +30,7 @@ type Props = {
 
 export default function Painel({ usuario, email, onSair }: Props) {
   const { transacoes, carregando, erro, adicionar, editar, remover } = useTransacoes();
+  const parcelas = useParcelamentos();
   const [mes, setMes] = useState(mesAtual());
   const [aba, setAba] = useState<Aba>("visao");
   const [dicaAberta, setDicaAberta] = useState<string | null>(null);
@@ -36,7 +40,10 @@ export default function Painel({ usuario, email, onSair }: Props) {
     setAba("aprender");
   }
 
-  const doMes = transacoes
+  // despesas do mês = transações + parcelas das compras parceladas que vencem no mês
+  const todas = [...transacoes, ...parcelasComoTransacoes(parcelas.parcelamentos)];
+
+  const doMes = todas
     .filter((t) => t.data.startsWith(mes))
     .sort((a, b) => b.data.localeCompare(a.data));
 
@@ -137,9 +144,11 @@ export default function Painel({ usuario, email, onSair }: Props) {
                     {t.tipo === "despesa" ? "-" : "+"}
                     {formatarMoeda(t.valorEmCentavos)}
                   </span>
-                  <button className="btn-remover" onClick={() => remover(t.id)}>
-                    Remover
-                  </button>
+                  {!t.id.startsWith("parc-") && (
+                    <button className="btn-remover" onClick={() => remover(t.id)}>
+                      Remover
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -152,7 +161,17 @@ export default function Painel({ usuario, email, onSair }: Props) {
 
         {aba === "transacoes" && <PaginaTransacoes transacoes={transacoes} onRemover={remover} onEditar={editar} />}
 
-        {aba === "relatorios" && <PaginaRelatorios transacoes={transacoes} />}
+        {aba === "parcelas" && (
+          <PaginaParcelas
+            parcelamentos={parcelas.parcelamentos}
+            carregando={parcelas.carregando}
+            erro={parcelas.erro}
+            onAdicionar={parcelas.adicionar}
+            onRemover={parcelas.remover}
+          />
+        )}
+
+        {aba === "relatorios" && <PaginaRelatorios transacoes={todas} />}
 
         {aba === "investimentos" && <PaginaInvestimentos />}
 

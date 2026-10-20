@@ -5,11 +5,7 @@ const CACHE = `financas-${VERSAO}`;
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.add("/")));
-  // a versão nova espera o usuário tocar em "Atualizar" (mensagem abaixo)
-});
-
-self.addEventListener("message", (e) => {
-  if (e.data && e.data.tipo === "PULAR_ESPERA") self.skipWaiting();
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", (e) => {
@@ -27,6 +23,7 @@ self.addEventListener("fetch", (e) => {
 
   if (req.method !== "GET" || url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/api/")) return;
+  if (url.searchParams.has("checar")) return; // checagem de versão: sempre pela rede
 
   // páginas: rede primeiro, cache se estiver offline
   if (req.mode === "navigate") {
