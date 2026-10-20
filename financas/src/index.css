@@ -910,3 +910,52 @@ body {
 .parcela-previa { margin: 0; color: var(--suave); font-size: 0.9rem; }
 .pagina-parcelas .barra-preenchida { background: var(--destaque); }
 .pagina-parcelas .formulario { max-width: 640px; }
+
+/* ===== aviso para instalar o app ===== */
+.aviso-instalar {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 60;
+  max-width: 440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px 10px 14px;
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  font-size: 0.9rem;
+}
+.aviso-instalar > svg { flex: none; color: var(--destaque); }
+.aviso-instalar span { flex: 1; }
+.aviso-instalar button {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  background: var(--destaque);
+  color: #11140c;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.aviso-instalar .fechar { display: grid; place-items: center; padding: 8px; background: transparent; color: var(--suave); }
+
+/* lista de transações recentes no celular: valor não invade a data */
+@media (max-width: 560px) {
+  .item {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "icone info valor"
+      ". remover remover";
+    gap: 4px 12px;
+  }
+  .item > :first-child { grid-area: icone; }
+  .item > .item-info { grid-area: info; }
+  .item > .item-valor { grid-area: valor; }
+  .item > .btn-remover { grid-area: remover; justify-self: end; padding: 6px 0; }
+}
