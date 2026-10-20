@@ -420,7 +420,7 @@ input:focus, select:focus {
     bottom: 0;
     z-index: 20;
     display: grid;
-    grid-template-columns: 1fr 1fr 68px 1fr 1fr;
+    grid-template-columns: repeat(4, 1fr);
     align-items: center;
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     background: var(--card);
@@ -441,6 +441,7 @@ input:focus, select:focus {
   }
   .barra-item.ativo { color: var(--destaque); }
   .barra-nova {
+    display: none !important; /* botão + removido */
     justify-self: center;
     display: grid;
     place-items: center;
@@ -946,7 +947,7 @@ body {
 
 /* lista de transações recentes no celular: valor não invade a data */
 @media (max-width: 560px) {
-  .item {
+  .item:not(.item-transacao) {
     display: grid;
     grid-template-columns: 36px minmax(0, 1fr) auto;
     grid-template-areas:
@@ -954,8 +955,8 @@ body {
       ". remover remover";
     gap: 4px 12px;
   }
-  .item > :first-child { grid-area: icone; }
-  .item > .item-info { grid-area: info; }
-  .item > .item-valor { grid-area: valor; }
-  .item > .btn-remover { grid-area: remover; justify-self: end; padding: 6px 0; }
+  .item:not(.item-transacao) > :first-child { grid-area: icone; }
+  .item:not(.item-transacao) > .item-info { grid-area: info; }
+  .item:not(.item-transacao) > .item-valor { grid-area: valor; }
+  .item:not(.item-transacao) > .btn-remover { grid-area: remover; justify-self: end; padding: 6px 0; }
 }
