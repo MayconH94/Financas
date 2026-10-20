@@ -1,75 +1,53 @@
-# React + TypeScript + Vite
+# Finflow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Dashboard de finanças pessoais: receitas e despesas, compras parceladas, investimentos com cotações,
+conversor de moedas e conteúdo educativo para quem está começando a investir. Funciona como PWA
+(instalável no celular).
 
-Currently, two official plugins are available:
+**Stack:** Vite + React + TypeScript, Supabase (login, banco Postgres e Storage), funções da Vercel em `api/`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Rodar localmente
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Crie o arquivo `.env.local` na raiz:
 
 ```
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+```
+
+As funções de `api/` (cotações e moedas) só rodam na Vercel, não no `npm run dev`.
+Na Vercel, configure também a variável `BRAPI_TOKEN`.
+
+## Scripts
+
+| Comando | O que faz |
+| --- | --- |
+| `npm run dev` | servidor de desenvolvimento |
+| `npm run build` | confere os tipos e gera a versão de produção |
+| `npm run lint` | ESLint |
+
+## Estrutura
+
+```
+api/                funções da Vercel (cotacoes.ts, moedas.ts)
+public/             manifest.webmanifest, sw.js (PWA) e ícones
+src/
+  components/       telas e peças de interface (Pagina*, Formulario*, Modal, BarraMobile...)
+  hooks/            acesso aos dados (useTransacoes, useParcelamentos, useSessao...)
+  utils/            regras e cálculos puros (dinheiro, datas, parcelamentos, categorias...)
+  types/            tipos compartilhados
+  lib/supabase.ts   cliente do Supabase
+```
+
+## Banco de dados (Supabase)
+
+Tabelas `transacoes`, `investimentos` e `parcelamentos`, todas com RLS: cada usuário só acessa as próprias linhas.
+Bucket `avatares` no Storage para as fotos de perfil.
+
+Para o "Esqueci minha senha" funcionar, em Authentication → URL Configuration preencha o
+**Site URL** e as **Redirect URLs** com o endereço do app (e `http://localhost:5173` para desenvolvimento).

@@ -1,15 +1,16 @@
 import { useState, type FormEvent } from "react";
 import { CreditCard } from "lucide-react";
 import { converterParaCentavos, formatarMoeda } from "../utils/dinheiro";
-import { LISTA_CATEGORIA, type Categoria } from "../utils/categorias";
+import { CATEGORIAS_DESPESA, type Categoria } from "../utils/categorias";
+import { dataBR, hojeISO } from "../utils/datas";
 import {
-  hojeISO,
   parcelasDoMes,
   resumir,
   valorDaParcela,
   type NovoParcelamento,
   type Parcelamento,
 } from "../utils/parcelamentos";
+import EditarParcelamento from "./EditarParcelamento";
 import IconeCategoria from "./IconeCategoria";
 
 type Props = {
@@ -17,12 +18,11 @@ type Props = {
   carregando: boolean;
   erro: string;
   onAdicionar: (dados: NovoParcelamento) => Promise<void>;
+  onEditar: (id: string, dados: NovoParcelamento) => Promise<boolean>;
   onRemover: (id: string) => Promise<void>;
 };
 
-const dataBR = (iso: string) => iso.split("-").reverse().join("/");
-
-export default function PaginaParcelas({ parcelamentos, carregando, erro, onAdicionar, onRemover }: Props) {
+export default function PaginaParcelas({ parcelamentos, carregando, erro, onAdicionar, onEditar, onRemover }: Props) {
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [parcelas, setParcelas] = useState("12");
@@ -30,6 +30,7 @@ export default function PaginaParcelas({ parcelamentos, carregando, erro, onAdic
   const [categoria, setCategoria] = useState<Categoria>("Outros");
   const [erroForm, setErroForm] = useState("");
   const [confirmando, setConfirmando] = useState<string | null>(null);
+  const [editando, setEditando] = useState<Parcelamento | null>(null);
 
   const hoje = hojeISO();
   const resumos = parcelamentos.map((p) => ({ p, r: resumir(p, hoje) }));
@@ -149,9 +150,14 @@ export default function PaginaParcelas({ parcelamentos, carregando, erro, onAdic
                       </button>
                     </span>
                   ) : (
-                    <button type="button" className="btn-acao" onClick={() => setConfirmando(p.id)}>
-                      Remover
-                    </button>
+                    <span className="item-acoes">
+                      <button type="button" className="btn-acao" onClick={() => setEditando(p)}>
+                        Editar
+                      </button>
+                      <button type="button" className="btn-acao" onClick={() => setConfirmando(p.id)}>
+                        Remover
+                      </button>
+                    </span>
                   )}
                 </div>
               </li>
@@ -179,7 +185,7 @@ export default function PaginaParcelas({ parcelamentos, carregando, erro, onAdic
         />
         <input type="date" value={primeira} onChange={(e) => setPrimeira(e.target.value)} aria-label="Primeira parcela" />
         <select value={categoria} onChange={(e) => setCategoria(e.target.value as Categoria)}>
-          {LISTA_CATEGORIA.map((c) => (
+          {CATEGORIAS_DESPESA.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
@@ -191,6 +197,15 @@ export default function PaginaParcelas({ parcelamentos, carregando, erro, onAdic
         </button>
         {erroForm && <p className="erro">{erroForm}</p>}
       </form>
+
+      {editando && (
+        <EditarParcelamento
+          key={editando.id}
+          parcelamento={editando}
+          onSalvar={(dados) => onEditar(editando.id, dados)}
+          onFechar={() => setEditando(null)}
+        />
+      )}
     </div>
   );
 }

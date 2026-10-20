@@ -1,24 +1,46 @@
 import { useState, type FormEvent } from "react";
-import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import CampoSenha from "./CampoSenha";
+
+type Modo = "entrar" | "criar" | "recuperar";
 
 function traduzir(mensagem: string): string {
   if (mensagem.includes("Invalid login credentials")) return "E-mail ou senha incorretos.";
   if (mensagem.includes("already registered")) return "Este e-mail já tem uma conta.";
   if (mensagem.includes("at least")) return "A senha precisa ter pelo menos 6 caracteres.";
   if (mensagem.includes("Email not confirmed")) return "Confirme seu e-mail antes de entrar.";
+  if (mensagem.includes("rate limit") || mensagem.includes("For security purposes")) {
+    return "Muitas tentativas. Aguarde alguns minutos e tente de novo.";
+  }
   return "Não foi possível concluir. Tente novamente.";
 }
 
+const TITULO: Record<Modo, string> = {
+  entrar: "", // no login a frase fina já serve de título
+  criar: "Crie sua conta",
+  recuperar: "Recuperar senha",
+};
+
+const BOTAO: Record<Modo, string> = {
+  entrar: "Entrar",
+  criar: "Criar conta",
+  recuperar: "Enviar link",
+};
+
 export default function Login() {
-  const [modo, setModo] = useState<"entrar" | "criar">("entrar");
+  const [modo, setModo] = useState<Modo>("entrar");
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [aviso, setAviso] = useState("");
   const [enviando, setEnviando] = useState(false);
-  const [verSenha, setVerSenha] = useState(false);
+
+  function trocarModo(novo: Modo) {
+    setModo(novo);
+    setErro("");
+    setAviso("");
+  }
 
   async function aoEnviar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,7 +51,7 @@ export default function Login() {
     if (modo === "entrar") {
       const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
       if (error) setErro(traduzir(error.message));
-    } else {
+    } else if (modo === "criar") {
       const { data, error } = await supabase.auth.signUp({
         email,
         password: senha,
@@ -37,15 +59,15 @@ export default function Login() {
       });
       if (error) setErro(traduzir(error.message));
       else if (!data.session) setAviso("Conta criada! Confirme seu e-mail para entrar.");
+    } else {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: window.location.origin,
+      });
+      if (error) setErro(traduzir(error.message));
+      else setAviso("Se esse e-mail tiver uma conta, enviamos um link para redefinir a senha. Confira também o spam.");
     }
 
     setEnviando(false);
-  }
-
-  function trocarModo(novo: "entrar" | "criar") {
-    setModo(novo);
-    setErro("");
-    setAviso("");
   }
 
   return (
@@ -54,10 +76,19 @@ export default function Login() {
         <div className="login-logo">
           <span className="marca-logo">$</span>
           <strong>Finflow</strong>
-          
         </div>
 
-        <h1>{modo === "entrar" ? "Seu controle financeiro na palma da sua mão!" : "Crie sua conta"}</h1>
+        <h1 className="login-frase">
+          <span>Sua vida financeira</span>
+          <span className="destaque">organizada</span>
+          <span className="fim">sem complicação</span>
+        </h1>
+
+        {TITULO[modo] && <h2 className="login-subtitulo">{TITULO[modo]}</h2>}
+
+        {modo === "recuperar" && (
+          <p className="login-texto">Informe seu e-mail e enviaremos um link para criar uma nova senha.</p>
+        )}
 
         {modo === "criar" && (
           <label className="login-campo">
@@ -86,38 +117,32 @@ export default function Login() {
           />
         </label>
 
-        <label className="login-campo">
-          Senha
-          <span className="login-senha">
-            <input
-              type={verSenha ? "text" : "password"}
-              placeholder="Digite sua senha"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              autoComplete={modo === "entrar" ? "current-password" : "new-password"}
-              minLength={6}
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setVerSenha(!verSenha)}
-              aria-label={verSenha ? "Ocultar senha" : "Mostrar senha"}
-            >
-              {verSenha ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </span>
-          {modo === "criar" && <small>Mínimo de 6 caracteres.</small>}
-        </label>
+        {modo !== "recuperar" && (
+          <CampoSenha
+            rotulo="Senha"
+            placeholder="Digite sua senha"
+            valor={senha}
+            onChange={setSenha}
+            autoComplete={modo === "entrar" ? "current-password" : "new-password"}
+            dica={modo === "criar" ? "Mínimo de 6 caracteres." : undefined}
+          />
+        )}
+
+        {modo === "entrar" && (
+          <button type="button" className="login-link" onClick={() => trocarModo("recuperar")}>
+            Esqueci minha senha
+          </button>
+        )}
 
         <button type="submit" className="btn-primario" disabled={enviando}>
-          {enviando ? "Aguarde..." : modo === "entrar" ? "Entrar" : "Criar conta"}
+          {enviando ? "Aguarde..." : BOTAO[modo]}
         </button>
 
         {erro && <p className="erro">{erro}</p>}
         {aviso && <p className="positivo">{aviso}</p>}
 
         <p className="login-troca">
-          {modo === "entrar" ? "Não tem conta?" : "Já tem conta?"}{" "}
+          {modo === "entrar" ? "Não tem conta?" : modo === "criar" ? "Já tem conta?" : "Lembrou a senha?"}{" "}
           <button type="button" onClick={() => trocarModo(modo === "entrar" ? "criar" : "entrar")}>
             {modo === "entrar" ? "Criar conta" : "Entrar"}
           </button>

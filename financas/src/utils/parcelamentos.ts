@@ -1,5 +1,6 @@
 import type { Categoria } from "./categorias";
 import type { Transacao } from "../types/transacao";
+import { hojeISO } from "./datas";
 
 export type Parcelamento = {
   id: string;
@@ -13,7 +14,6 @@ export type Parcelamento = {
 export type NovoParcelamento = Omit<Parcelamento, "id">;
 
 const pad = (n: number) => String(n).padStart(2, "0");
-export const hojeISO = () => new Date().toLocaleDateString("sv-SE"); // AAAA-MM-DD no fuso local
 
 // vencimento da parcela de índice i (0 = primeira). Dia 31 vira o último dia de meses curtos.
 export function dataDaParcela(p: Parcelamento, i: number): string {

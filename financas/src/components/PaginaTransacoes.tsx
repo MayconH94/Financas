@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Transacao } from "../types/transacao";
 import { LISTA_CATEGORIA, type Categoria } from "../utils/categorias";
+import { dataBR } from "../utils/datas";
 import { formatarMoeda } from "../utils/dinheiro";
 import SeletorMes from "./SeletorMes";
 import IconeCategoria from "./IconeCategoria";
@@ -13,10 +14,6 @@ type Props = {
 };
 
 const POR_PAGINA = 50;
-
-function dataBR(iso: string) {
-  return iso.split("-").reverse().join("/");
-}
 
 // "Alimentação" -> "alimentacao", para a busca ignorar acentos e maiúsculas
 function normalizar(texto: string) {

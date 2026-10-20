@@ -1,11 +1,12 @@
 import { useState, type FormEvent, type CSSProperties } from "react";
 import type { NovoInvestimento, TipoInvestimento } from "../types/investimento";
+import { hojeISO } from "../utils/datas";
 import { converterParaCentavos } from "../utils/dinheiro";
 import { TIPOS, LISTA_TIPOS } from "../utils/tiposInvestimento";
 
 type Props = { onAdicionar: (dados: NovoInvestimento) => Promise<void> };
 
-const hoje = new Date().toLocaleDateString("en-CA"); // AAAA-MM-DD no horário local
+const hoje = hojeISO();
 
 export default function FormularioInvestimento({ onAdicionar }: Props) {
   const [tipo, setTipo] = useState<TipoInvestimento>("acao");

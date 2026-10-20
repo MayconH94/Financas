@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { mesAtual } from "../utils/datas";
 
 type Props = {
   valor: string; // AAAA-MM ("" = todos os meses)
@@ -6,10 +7,9 @@ type Props = {
   rotulo?: string;
 };
 
-const hoje = () => new Date().toLocaleDateString("sv-SE").slice(0, 7);
 
 function deslocar(mes: string, delta: number) {
-  const [a, m] = (mes || hoje()).split("-").map(Number);
+  const [a, m] = (mes || mesAtual()).split("-").map(Number);
   const d = new Date(a, m - 1 + delta, 1);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }

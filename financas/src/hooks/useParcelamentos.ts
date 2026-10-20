@@ -69,6 +69,30 @@ export function useParcelamentos() {
     setParcelamentos((atual) => [deLinha(data as Linha), ...atual]);
   }
 
+  async function editar(id: string, dados: NovoParcelamento): Promise<boolean> {
+    setErro("");
+    const { data, error } = await supabase
+      .from("parcelamentos")
+      .update({
+        descricao: dados.descricao,
+        valor_total_em_centavos: dados.valorTotalEmCentavos,
+        parcelas: dados.parcelas,
+        primeira_parcela: dados.primeiraParcela,
+        categoria: dados.categoria,
+      })
+      .eq("id", id)
+      .select(COLUNAS)
+      .single();
+
+    if (error) {
+      setErro("Não foi possível editar a compra parcelada.");
+      return false;
+    }
+    const atualizado = deLinha(data as Linha);
+    setParcelamentos((atual) => atual.map((p) => (p.id === id ? atualizado : p)));
+    return true;
+  }
+
   async function remover(id: string) {
     setErro("");
     const { error } = await supabase.from("parcelamentos").delete().eq("id", id);
@@ -80,5 +104,5 @@ export function useParcelamentos() {
     setParcelamentos((atual) => atual.filter((p) => p.id !== id));
   }
 
-  return { parcelamentos, carregando, erro, adicionar, remover };
+  return { parcelamentos, carregando, erro, adicionar, editar, remover };
 }

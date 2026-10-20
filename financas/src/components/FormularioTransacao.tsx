@@ -1,7 +1,8 @@
 import { useState, type FormEvent, type CSSProperties } from "react";
-import type { Transacao } from "../types/transacao";
+import type { Transacao, TipoTransacao } from "../types/transacao";
 import { converterParaCentavos } from "../utils/dinheiro";
-import { CATEGORIA, LISTA_CATEGORIA, type Categoria } from "../utils/categorias";
+import { hojeISO } from "../utils/datas";
+import { CATEGORIA, categoriasDoTipo, type Categoria } from "../utils/categorias";
 
 type NovaTransacao = Omit<Transacao, "id">;
 
@@ -9,15 +10,19 @@ type Props = {
   onAdicionar: (dados: NovaTransacao) => void;
 };
 
-const hoje = () => new Date().toLocaleDateString("sv-SE"); // AAAA-MM-DD no fuso local
-
 export default function FormularioTransacao({ onAdicionar }: Props) {
+  const [tipo, setTipo] = useState<TipoTransacao>("despesa");
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
-  const [data, setData] = useState(hoje());
+  const [data, setData] = useState(hojeISO());
   const [categoria, setCategoria] = useState<Categoria>("Outros");
-  const [tipo, setTipo] = useState<"receita" | "despesa">("despesa");
   const [erro, setErro] = useState("");
+
+  // ao trocar o tipo, a categoria volta para "Outros" (serve para os dois)
+  function escolherTipo(novo: TipoTransacao) {
+    setTipo(novo);
+    setCategoria("Outros");
+  }
 
   function aoEnviar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,13 +33,7 @@ export default function FormularioTransacao({ onAdicionar }: Props) {
       return;
     }
 
-    onAdicionar({
-      descricao: descricao.trim(),
-      valorEmCentavos: centavos,
-      data,
-      categoria,
-      tipo,
-    });
+    onAdicionar({ descricao: descricao.trim(), valorEmCentavos: centavos, data, categoria, tipo });
 
     setDescricao("");
     setValor("");
@@ -43,35 +42,57 @@ export default function FormularioTransacao({ onAdicionar }: Props) {
   }
 
   return (
-
     <form className="card formulario" onSubmit={aoEnviar}>
-        <h2>Nova transacao</h2>
+      <h2>Nova transação</h2>
+
+      <div className="seletor-tipo campo-largo">
+        <button
+          type="button"
+          className={`btn-acao ${tipo === "despesa" ? "ativo-despesa" : ""}`}
+          onClick={() => escolherTipo("despesa")}
+        >
+          Despesa
+        </button>
+        <button
+          type="button"
+          className={`btn-acao ${tipo === "receita" ? "ativo-receita" : ""}`}
+          onClick={() => escolherTipo("receita")}
+        >
+          Receita
+        </button>
+      </div>
+
       <input placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
-      <input placeholder="Valor (ex.: 38,95)" value={valor} onChange={(e) => setValor(e.target.value)} inputMode="decimal" />
+      <input
+        placeholder="Valor (ex.: 38,95)"
+        value={valor}
+        onChange={(e) => setValor(e.target.value)}
+        inputMode="decimal"
+      />
       <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
+
       <div className="seletor-categorias">
-      {LISTA_CATEGORIA.map((c) => {
-    const { icone: Icone, cor } = CATEGORIA[c];
-      return (
-      <button
-        type="button"
-        key={c}
-        className={`chip-cat ${categoria === c ? "ativo" : ""}`}
-        style={{ "--cor": cor } as CSSProperties}
-        onClick={() => setCategoria(c)}
-     >
-        <Icone size={18}/>
-        <span>{c}</span>
+        {categoriasDoTipo(tipo).map((c) => {
+          const { icone: Icone, cor } = CATEGORIA[c];
+          return (
+            <button
+              type="button"
+              key={c}
+              className={`chip-cat ${categoria === c ? "ativo" : ""}`}
+              style={{ "--cor": cor } as CSSProperties}
+              onClick={() => setCategoria(c)}
+            >
+              <Icone size={18} />
+              <span>{c}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <button type="submit" className="btn-primario">
+        Adicionar
       </button>
-    );
-  })}
-</div>
-      <select value={tipo} onChange={(e) => setTipo(e.target.value as "receita" | "despesa")}>
-        <option value="despesa">Despesa</option>
-        <option value="receita">Receita</option>
-      </select>
-      <button type="submit" className="btn-primario">Adicionar</button>
       {erro && <p className="erro">{erro}</p>}
     </form>
   );
-};
+}

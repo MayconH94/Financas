@@ -14,13 +14,14 @@ import PaginaConversor from "./components/PaginaConversor";
 import PaginaInvestimentos from "./components/PaginaInvestimentos";
 import PaginaRelatorios from "./components/PaginaRelatorios";
 import SeletorMes from "./components/SeletorMes";
-import CarroselDicas from "./components/CarroselDicas";
+import CarrosselDicas from "./components/CarrosselDicas";
 import PaginaAprender from "./components/PaginaAprender";
 import PaginaParcelas from "./components/PaginaParcelas";
+import BarraMobile from "./components/BarraMobile";
+import Modal from "./components/Modal";
+import { dataBR, mesAtual } from "./utils/datas";
 import { useParcelamentos } from "./hooks/useParcelamentos";
 import { parcelasComoTransacoes } from "./utils/parcelamentos";
-
-const mesAtual = () => new Date().toLocaleDateString("sv-SE").slice(0, 7); // AAAA-MM
 
 type Props = {
   usuario: User;
@@ -34,6 +35,7 @@ export default function Painel({ usuario, email, onSair }: Props) {
   const [mes, setMes] = useState(mesAtual());
   const [aba, setAba] = useState<Aba>("visao");
   const [dicaAberta, setDicaAberta] = useState<string | null>(null);
+  const [novaAberta, setNovaAberta] = useState(false);
 
   function abrirDica(id: string | null) {
     setDicaAberta(id);
@@ -71,11 +73,9 @@ export default function Painel({ usuario, email, onSair }: Props) {
       type="button"
       className={`menu-item ${aba === id ? "ativo" : ""}`}
       onClick={() => setAba(id)}
-      title={nome}
-      aria-label={nome}
     >
       <Icone size={18} />
-      <span className="menu-rotulo">{nome}</span>
+      {nome}
     </button>
   ))}
 </nav>
@@ -115,7 +115,7 @@ export default function Painel({ usuario, email, onSair }: Props) {
           </div>
         </section>
 
-        <CarroselDicas onAbrir={abrirDica} />
+        <CarrosselDicas onAbrir={abrirDica} />
 
         <section className="grade-meio">
           <div className="coluna-esquerda">
@@ -138,7 +138,7 @@ export default function Painel({ usuario, email, onSair }: Props) {
                   <IconeCategoria categoria={t.categoria} />
                     <div className="item-info">
                       <strong>{t.descricao}</strong>
-                      <small>{t.data} · {t.categoria}</small>
+                      <small>{dataBR(t.data)} · {t.categoria}</small>
                   </div>
                   <span className={`item-valor ${t.tipo === "despesa" ? "negativo" : "positivo"}`}>
                     {t.tipo === "despesa" ? "-" : "+"}
@@ -167,6 +167,7 @@ export default function Painel({ usuario, email, onSair }: Props) {
             carregando={parcelas.carregando}
             erro={parcelas.erro}
             onAdicionar={parcelas.adicionar}
+            onEditar={parcelas.editar}
             onRemover={parcelas.remover}
           />
         )}
@@ -181,6 +182,19 @@ export default function Painel({ usuario, email, onSair }: Props) {
           <PaginaAprender key={dicaAberta ?? "todas"} abertaInicial={dicaAberta} />
         )}
       </main>
+
+      <BarraMobile aba={aba} onAba={setAba} onNova={() => setNovaAberta(true)} />
+
+      {novaAberta && (
+        <Modal rotulo="Nova transação" onFechar={() => setNovaAberta(false)}>
+          <FormularioTransacao
+            onAdicionar={(dados) => {
+              void adicionar(dados);
+              setNovaAberta(false);
+            }}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

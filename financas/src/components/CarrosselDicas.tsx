@@ -2,7 +2,7 @@ import { DICAS_DA_SEMANA } from "../utils/dicas";
 
 type Props = {onAbrir :(id: string | null ) => void};
 
-export default function CarroselDicas({ onAbrir }: Props) {
+export default function CarrosselDicas({ onAbrir }: Props) {
     return (
         <section className="dicas-card">
             <div className="dicas-topo">

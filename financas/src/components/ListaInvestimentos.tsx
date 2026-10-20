@@ -1,6 +1,7 @@
 import type { Investimento } from "../types/investimento";
 import { calcularPosicao } from "../utils/carteira";
 import { formatarMoeda } from "../utils/dinheiro";
+import { dataBR } from "../utils/datas";
 import { TIPOS } from "../utils/tiposInvestimento";
 
 type Props = {
@@ -8,10 +9,6 @@ type Props = {
   cotacoes: Map<string, number>;
   onRemover: (id: string) => Promise<void>;
 };
-
-function dataBR(iso: string) {
-  return iso.split("-").reverse().join("/");
-}
 
 export default function ListaInvestimentos({ investimentos, cotacoes, onRemover }: Props) {
   return (

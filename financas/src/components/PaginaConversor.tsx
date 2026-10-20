@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { ArrowDownUp } from "lucide-react";
 import { useMoedas } from "../hooks/useMoedas";
+import { dataBR } from "../utils/datas";
 import { NOMES_MOEDAS, ORDEM_MOEDAS, converter, formatarValor, lerNumero } from "../utils/moedas";
-
-function dataBR(iso: string) {
-  return iso.split("-").reverse().join("/");
-}
 
 export default function PaginaConversor() {
   const { cambio, falhou, carregando } = useMoedas();

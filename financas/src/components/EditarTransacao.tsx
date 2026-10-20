@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from "react";
-import type { Transacao } from "../types/transacao";
+import type { Transacao, TipoTransacao } from "../types/transacao";
 import { converterParaCentavos } from "../utils/dinheiro";
-import { LISTA_CATEGORIA, type Categoria } from "../utils/categorias";
+import { categoriasDoTipo, type Categoria } from "../utils/categorias";
+import Modal from "./Modal";
 
 type Dados = Omit<Transacao, "id">;
 
@@ -15,13 +16,18 @@ type Props = {
 const paraTexto = (centavos: number) => (centavos / 100).toFixed(2).replace(".", ",");
 
 export default function EditarTransacao({ transacao, onSalvar, onFechar }: Props) {
-  const [tipo, setTipo] = useState(transacao.tipo);
+  const [tipo, setTipo] = useState<TipoTransacao>(transacao.tipo);
   const [descricao, setDescricao] = useState(transacao.descricao);
   const [valor, setValor] = useState(paraTexto(transacao.valorEmCentavos));
   const [data, setData] = useState(transacao.data);
   const [categoria, setCategoria] = useState<Categoria>(transacao.categoria);
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
+
+  function escolherTipo(novo: TipoTransacao) {
+    setTipo(novo);
+    if (!categoriasDoTipo(novo).includes(categoria)) setCategoria("Outros");
+  }
 
   async function aoEnviar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -33,13 +39,7 @@ export default function EditarTransacao({ transacao, onSalvar, onFechar }: Props
     }
 
     setSalvando(true);
-    const ok = await onSalvar({
-      descricao: descricao.trim(),
-      valorEmCentavos: centavos,
-      data,
-      categoria,
-      tipo,
-    });
+    const ok = await onSalvar({ descricao: descricao.trim(), valorEmCentavos: centavos, data, categoria, tipo });
     setSalvando(false);
 
     if (ok) onFechar();
@@ -47,29 +47,22 @@ export default function EditarTransacao({ transacao, onSalvar, onFechar }: Props
   }
 
   return (
-    <div className="modal-fundo" onClick={onFechar}>
-      <form
-        className="modal card"
-        onClick={(e) => e.stopPropagation()}
-        onSubmit={aoEnviar}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Editar transação"
-      >
+    <Modal rotulo="Editar transação" onFechar={onFechar}>
+      <form onSubmit={aoEnviar}>
         <h2>Editar transação</h2>
 
-        <div className="modal-tipo">
+        <div className="seletor-tipo">
           <button
             type="button"
             className={`btn-acao ${tipo === "despesa" ? "ativo-despesa" : ""}`}
-            onClick={() => setTipo("despesa")}
+            onClick={() => escolherTipo("despesa")}
           >
             Despesa
           </button>
           <button
             type="button"
             className={`btn-acao ${tipo === "receita" ? "ativo-receita" : ""}`}
-            onClick={() => setTipo("receita")}
+            onClick={() => escolherTipo("receita")}
           >
             Receita
           </button>
@@ -84,7 +77,7 @@ export default function EditarTransacao({ transacao, onSalvar, onFechar }: Props
         />
         <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
         <select value={categoria} onChange={(e) => setCategoria(e.target.value as Categoria)}>
-          {LISTA_CATEGORIA.map((c) => (
+          {categoriasDoTipo(tipo).map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
@@ -102,6 +95,6 @@ export default function EditarTransacao({ transacao, onSalvar, onFechar }: Props
           </button>
         </div>
       </form>
-    </div>
+    </Modal>
   );
 }
