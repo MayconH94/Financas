@@ -118,10 +118,10 @@ export default function Painel({ usuario, email, onSair }: Props) {
         <CarrosselDicas onAbrir={abrirDica} />
 
         <section className="grade-meio">
+          <FormularioTransacao onAdicionar={adicionar} />
           <div className="coluna-esquerda">
             <ResumoCategorias transacoes={doMes} />
           </div>
-          <FormularioTransacao onAdicionar={adicionar} />
         </section>
 
         <section className="card">
