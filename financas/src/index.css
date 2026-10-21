@@ -966,3 +966,23 @@ body {
 @media (max-width: 760px) {
   .grade-meio > .formulario { display: none; }
 }
+
+/* ===== relatórios: maiores gastos e metas ===== */
+.ranking { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 12px; }
+.ranking-linha { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+.ranking-linha span { color: var(--suave); font-size: 0.9rem; }
+.subtitulo-secao { margin: 24px 0 4px; font-size: 1rem; }
+.item-simples { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--borda); }
+.item-simples:last-child { border-bottom: 0; }
+.item-simples .item-info { min-width: 0; }
+.metas { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 18px; }
+.meta { display: grid; gap: 6px; padding-bottom: 18px; border-bottom: 1px solid var(--borda); }
+.meta:last-child { border-bottom: 0; padding-bottom: 0; }
+.meta-acoes, .meta-edicao { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 4px; }
+.meta-edicao input { flex: 1 1 160px; min-width: 0; }
+.barra-preenchida.meta-ok { background: var(--receita); }
+.barra-preenchida.meta-atencao { background: #e0a458; }
+.barra-preenchida.meta-estourou { background: var(--despesa); }
+.meta-texto.meta-ok { color: var(--receita); }
+.meta-texto.meta-atencao { color: #e0a458; }
+.meta-texto.meta-estourou { color: var(--despesa); }

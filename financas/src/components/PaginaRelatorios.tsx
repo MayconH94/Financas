@@ -3,6 +3,8 @@ import type { Transacao } from "../types/transacao";
 import { mesAtual } from "../utils/datas";
 import SeletorMes from "./SeletorMes";
 import ConsumoSeisMeses from "./ConsumoSeisMeses";
+import AnaliseGastos from "./AnaliseGastos";
+import MetasGastos from "./MetasGastos";
 
 type Props = { transacoes: Transacao[] };
 
@@ -20,6 +22,8 @@ export default function PaginaRelatorios({ transacoes }: Props) {
       </header>
 
       <ConsumoSeisMeses transacoes={transacoes} mesFinal={mes} />
+      <AnaliseGastos transacoes={transacoes} mes={mes} />
+      <MetasGastos transacoes={transacoes} mes={mes} />
     </div>
   );
 }
