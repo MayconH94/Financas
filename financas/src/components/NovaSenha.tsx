@@ -30,7 +30,7 @@ export default function NovaSenha({ onConcluir }: Props) {
     <div className="login-pagina">
       <form className="login-form" onSubmit={aoEnviar}>
         <div className="login-logo">
-          <span className="marca-logo">$</span>
+          <img className="login-icone" src="/logo-finflow.png" alt="" width={34} height={34} />
           <strong>Finflow</strong>
         </div>
 

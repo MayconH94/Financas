@@ -74,7 +74,7 @@ export default function Login() {
     <div className="login-pagina">
       <form className="login-form" onSubmit={aoEnviar}>
         <div className="login-logo">
-          <span className="marca-logo">$</span>
+          <img className="login-icone" src="/logo-finflow.png" alt="" width={40} height={40} />
           <strong>Finflow</strong>
         </div>
 

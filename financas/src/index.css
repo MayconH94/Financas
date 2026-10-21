@@ -420,7 +420,7 @@ input:focus, select:focus {
     bottom: 0;
     z-index: 20;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr 1fr 68px 1fr 1fr;
     align-items: center;
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     background: var(--card);
@@ -441,7 +441,6 @@ input:focus, select:focus {
   }
   .barra-item.ativo { color: var(--destaque); }
   .barra-nova {
-    display: none !important; /* botão + removido */
     justify-self: center;
     display: grid;
     place-items: center;
@@ -959,4 +958,11 @@ body {
   .item:not(.item-transacao) > .item-info { grid-area: info; }
   .item:not(.item-transacao) > .item-valor { grid-area: valor; }
   .item:not(.item-transacao) > .btn-remover { grid-area: remover; justify-self: end; padding: 6px 0; }
+}
+
+.login-icone { width: 40px; height: 40px; border-radius: 10px; display: block; }
+
+/* celular: nova transação fica no botão + da barra, não na Visão geral */
+@media (max-width: 760px) {
+  .grade-meio > .formulario { display: none; }
 }

@@ -62,7 +62,7 @@ export default function Painel({ usuario, email, onSair }: Props) {
     <div className="shell">
       <aside className="sidebar">
         <div className="marca">
-          <span className="marca-logo">$</span>
+          <img className="login-icone" src="/logo-finflow.png" alt="" width={34} height={34} />
           <NomeUsuario usuario={usuario} />
         </div>
 
