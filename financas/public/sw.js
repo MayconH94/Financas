@@ -1,6 +1,6 @@
 // Service worker simples: deixa o app abrir mesmo sem internet (só a "casca").
 // Dados (Supabase) e /api nunca são guardados: sempre vêm da rede.
-const VERSAO = "v1";
+const VERSAO = "v2";
 const CACHE = `financas-${VERSAO}`;
 
 self.addEventListener("install", (e) => {
