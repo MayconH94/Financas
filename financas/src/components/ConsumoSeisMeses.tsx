@@ -27,7 +27,7 @@ export default function ConsumoSeisMeses({ transacoes, mesFinal }: Props) {
       ) : (
         <>
           <svg viewBox="0 0 100 100" className="consumo-rosca" role="img" aria-label="Despesas por categoria nos últimos 6 meses">
-            <circle cx={50} cy={50} r={RAIO} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={14} />
+            <circle cx={50} cy={50} r={RAIO} fill="none" stroke="color-mix(in srgb, var(--texto) 8%, transparent)" strokeWidth={14} />
             {fatias.map((f) => {
               const comprimento = (f.total / total) * CIRCUNFERENCIA;
               return (

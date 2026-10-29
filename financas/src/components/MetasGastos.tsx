@@ -98,7 +98,9 @@ export default function MetasGastos({ transacoes, mes }: Props) {
                     {meta ? "Editar meta" : "Definir meta"}
                   </button>
                   {meta && (
-                    <button type="button" className="btn-remover" onClick={() => void remover(chave)}>
+                    <button type="button" className="btn-remover" onClick={() => {
+                      if (window.confirm("Remover esta meta?")) void remover(chave);
+                    }}>
                       Remover
                     </button>
                   )}

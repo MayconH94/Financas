@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Cotacao, Investimento } from "../types/investimento";
+import { supabase } from "../lib/supabase";
 import { indexarCotacoes } from "../utils/carteira";
 
 const INTERVALO_MS = 60_000;
@@ -24,7 +25,12 @@ export function useCotacoes(investimentos: Investimento[]) {
 
     async function atualizar() {
       try {
-        const resposta = await fetch(`/api/cotacoes?bolsa=${bolsa}&cripto=${cripto}`);
+        const { data: sessao } = await supabase.auth.getSession();
+        const token = sessao.session?.access_token;
+        if (!token) return;
+        const resposta = await fetch(`/api/cotacoes?bolsa=${bolsa}&cripto=${cripto}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (!resposta.ok) return;
         const dados = (await resposta.json()) as Cotacao[];
         if (ativo) setCotacoes(indexarCotacoes(dados));

@@ -1,5 +1,7 @@
 
 import { useState } from "react";
+import { Moon, Sun } from "lucide-react";
+import { useTema } from "./hooks/useTema";
 import { calcularSaldo, formatarMoeda } from "./utils/dinheiro";
 import { useTransacoes } from "./hooks/useTransacoes";
 import FormularioTransacao from "./components/FormularioTransacao";
@@ -30,6 +32,7 @@ type Props = {
 };
 
 export default function Painel({ usuario, email, onSair }: Props) {
+  const { tema, alternar: alternarTema } = useTema();
   const { transacoes, carregando, erro, adicionar, editar, remover } = useTransacoes();
   const parcelas = useParcelamentos();
   const [mes, setMes] = useState(mesAtual());
@@ -83,6 +86,15 @@ export default function Painel({ usuario, email, onSair }: Props) {
         <div className="sidebar-rodape">
           <small>{email}</small>
           <Avatar usuario={usuario}/>
+          <button
+            type="button"
+            className="btn-tema"
+            onClick={alternarTema}
+            aria-label={tema === "claro" ? "Usar tema escuro" : "Usar tema claro"}
+            title={tema === "claro" ? "Tema escuro" : "Tema claro"}
+          >
+            {tema === "claro" ? <Moon size={18} /> : <Sun size={18} />}
+          </button>
           <button className="btn-sair" onClick={onSair}>Sair</button>
         </div>
       </aside>
@@ -145,7 +157,9 @@ export default function Painel({ usuario, email, onSair }: Props) {
                     {formatarMoeda(t.valorEmCentavos)}
                   </span>
                   {!t.id.startsWith("parc-") && (
-                    <button className="btn-remover" onClick={() => remover(t.id)}>
+                    <button className="btn-remover" onClick={() => {
+                        if (window.confirm("Remover esta transação?")) remover(t.id);
+                      }}>
                       Remover
                     </button>
                   )}

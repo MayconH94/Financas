@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Investimento } from "../types/investimento";
 import { calcularPosicao } from "../utils/carteira";
 import { formatarMoeda } from "../utils/dinheiro";
@@ -11,6 +12,8 @@ type Props = {
 };
 
 export default function ListaInvestimentos({ investimentos, cotacoes, onRemover }: Props) {
+  const [confirmando, setConfirmando] = useState<string | null>(null);
+
   return (
     <section className="card">
       <h2>Minha carteira</h2>
@@ -57,9 +60,27 @@ export default function ListaInvestimentos({ investimentos, cotacoes, onRemover 
                   )}
                 </div>
 
-                <button type="button" className="btn-remover" onClick={() => void onRemover(i.id)}>
-                  Remover
-                </button>
+                {confirmando === i.id ? (
+                  <span className="item-acoes">
+                    <button
+                      type="button"
+                      className="btn-acao perigo"
+                      onClick={() => {
+                        setConfirmando(null);
+                        void onRemover(i.id);
+                      }}
+                    >
+                      Excluir
+                    </button>
+                    <button type="button" className="btn-acao" onClick={() => setConfirmando(null)}>
+                      Cancelar
+                    </button>
+                  </span>
+                ) : (
+                  <button type="button" className="btn-remover" onClick={() => setConfirmando(i.id)}>
+                    Remover
+                  </button>
+                )}
               </li>
             );
           })}

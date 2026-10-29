@@ -27,15 +27,29 @@ export function calcularSaldo(transacoes: Transacao[]): number {
 }
 
 
+// Maior valor aceito em um campo de dinheiro: R$ 999.999.999,99.
+const MAX_CENTAVOS = 99_999_999_999;
+
+// Converte o texto digitado para centavos. Devolve NaN se for inválido.
+// Aceita "1.234,56", "1234,56" e "38.95" (ponto único com 1-2 dígitos
+// depois = decimal). "1.000" e "1.234.567" são milhares. Letras e
+// notação científica (1e3) são rejeitadas.
 export function converterParaCentavos(texto: string): number {
-  const normalizado = texto
-  .trim()
-  .replace(/\./g, "") // remove separador de milhar
-  .replace(",", ".") // virugla decima vira ponto
+  const t = texto.trim();
+  if (!/^[\d.,]+$/.test(t)) return NaN;
 
- const numero = Number(normalizado);
- if (!normalizado || Number.isNaN(numero)) return NaN;
- return Math.round(numero * 100); 
+  let normalizado: string;
+  if (t.includes(",")) {
+    if (t.split(",").length > 2) return NaN;
+    normalizado = t.replace(/\./g, "").replace(",", ".");
+  } else {
+    const partes = t.split(".");
+    const ehDecimal = partes.length === 2 && partes[1].length > 0 && partes[1].length < 3;
+    normalizado = ehDecimal ? t : t.replace(/\./g, "");
+  }
 
+  const numero = Number(normalizado);
+  if (!normalizado || Number.isNaN(numero)) return NaN;
+  const centavos = Math.round(numero * 100);
+  return centavos > MAX_CENTAVOS ? NaN : centavos;
 }
-
