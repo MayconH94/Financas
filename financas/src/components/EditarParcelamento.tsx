@@ -1,23 +1,24 @@
 import { useState, type FormEvent } from "react";
-import { converterParaCentavos, formatarMoeda } from "../utils/dinheiro";
+import { converterParaCentavos, formatarMoeda, mascararMoeda } from "../utils/dinheiro";
 import { CATEGORIAS_DESPESA, type Categoria } from "../utils/categorias";
 import type { NovoParcelamento, Parcelamento } from "../utils/parcelamentos";
+import { hojeISO } from "../utils/datas";
 import Modal from "./Modal";
 
 type Props = {
-  parcelamento: Parcelamento;
+  parcelamento?: Parcelamento; // sem ele, o modal cria uma compra nova
   onSalvar: (dados: NovoParcelamento) => Promise<boolean>;
   onFechar: () => void;
 };
 
-const paraTexto = (centavos: number) => (centavos / 100).toFixed(2).replace(".", ",");
+const paraTexto = (centavos: number) => mascararMoeda((centavos / 100).toFixed(2).replace(".", ","));
 
 export default function EditarParcelamento({ parcelamento, onSalvar, onFechar }: Props) {
-  const [descricao, setDescricao] = useState(parcelamento.descricao);
-  const [valor, setValor] = useState(paraTexto(parcelamento.valorTotalEmCentavos));
-  const [parcelas, setParcelas] = useState(String(parcelamento.parcelas));
-  const [primeira, setPrimeira] = useState(parcelamento.primeiraParcela);
-  const [categoria, setCategoria] = useState<Categoria>(parcelamento.categoria);
+  const [descricao, setDescricao] = useState(parcelamento?.descricao ?? "");
+  const [valor, setValor] = useState(parcelamento ? paraTexto(parcelamento.valorTotalEmCentavos) : "");
+  const [parcelas, setParcelas] = useState(parcelamento ? String(parcelamento.parcelas) : "12");
+  const [primeira, setPrimeira] = useState(parcelamento?.primeiraParcela ?? hojeISO());
+  const [categoria, setCategoria] = useState<Categoria>(parcelamento?.categoria ?? "Outros");
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
 
@@ -46,16 +47,18 @@ export default function EditarParcelamento({ parcelamento, onSalvar, onFechar }:
     else setErro("Não foi possível salvar. Tente de novo.");
   }
 
+  const titulo = parcelamento ? "Editar compra parcelada" : "Nova compra parcelada";
+
   return (
-    <Modal rotulo="Editar compra parcelada" onFechar={onFechar}>
+    <Modal rotulo={titulo} onFechar={onFechar}>
       <form onSubmit={aoEnviar}>
-        <h2>Editar compra parcelada</h2>
+        <h2>{titulo}</h2>
 
         <input placeholder="O que foi comprado" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
         <input
           placeholder="Valor total (ex.: 1.200,00)"
           value={valor}
-          onChange={(e) => setValor(e.target.value)}
+          onChange={(e) => setValor(mascararMoeda(e.target.value))}
           inputMode="decimal"
         />
         <input
@@ -83,7 +86,7 @@ export default function EditarParcelamento({ parcelamento, onSalvar, onFechar }:
             Cancelar
           </button>
           <button type="submit" className="btn-primario" disabled={salvando}>
-            {salvando ? "Salvando…" : "Salvar"}
+            {salvando ? "Salvando…" : parcelamento ? "Salvar" : "Adicionar"}
           </button>
         </div>
       </form>

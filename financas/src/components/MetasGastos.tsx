@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Transacao } from "../types/transacao";
-import { formatarMoeda, converterParaCentavos } from "../utils/dinheiro";
+import { formatarMoeda, converterParaCentavos, mascararMoeda } from "../utils/dinheiro";
 import { CATEGORIAS_DESPESA } from "../utils/categorias";
 import { despesasDoMes, totalDespesas, situacaoMeta } from "../utils/gastos";
 import { useMetas } from "../hooks/useMetas";
@@ -82,7 +82,7 @@ export default function MetasGastos({ transacoes, mes }: Props) {
                     value={valor}
                     inputMode="decimal"
                     autoFocus
-                    onChange={(e) => setValor(e.target.value)}
+                    onChange={(e) => setValor(mascararMoeda(e.target.value))}
                   />
                   <button type="button" className="btn-acao" onClick={() => void confirmar(chave)}>
                     Salvar

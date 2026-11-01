@@ -1,7 +1,6 @@
-import { useState, type FormEvent } from "react";
-import { CreditCard } from "lucide-react";
-import { converterParaCentavos, formatarMoeda } from "../utils/dinheiro";
-import { CATEGORIAS_DESPESA, type Categoria } from "../utils/categorias";
+import { useState } from "react";
+import { CreditCard, Plus } from "lucide-react";
+import { formatarMoeda } from "../utils/dinheiro";
 import { dataBR, hojeISO } from "../utils/datas";
 import {
   parcelasDoMes,
@@ -20,15 +19,12 @@ type Props = {
   onAdicionar: (dados: NovoParcelamento) => Promise<void>;
   onEditar: (id: string, dados: NovoParcelamento) => Promise<boolean>;
   onRemover: (id: string) => Promise<void>;
+  novaAberta: boolean;
+  onAbrirNova: () => void;
+  onFecharNova: () => void;
 };
 
-export default function PaginaParcelas({ parcelamentos, carregando, erro, onAdicionar, onEditar, onRemover }: Props) {
-  const [descricao, setDescricao] = useState("");
-  const [valor, setValor] = useState("");
-  const [parcelas, setParcelas] = useState("12");
-  const [primeira, setPrimeira] = useState(hojeISO());
-  const [categoria, setCategoria] = useState<Categoria>("Outros");
-  const [erroForm, setErroForm] = useState("");
+export default function PaginaParcelas({ parcelamentos, carregando, erro, onAdicionar, onEditar, onRemover, novaAberta, onAbrirNova, onFecharNova }: Props) {
   const [confirmando, setConfirmando] = useState<string | null>(null);
   const [editando, setEditando] = useState<Parcelamento | null>(null);
 
@@ -38,37 +34,6 @@ export default function PaginaParcelas({ parcelamentos, carregando, erro, onAdic
   const totalRestante = resumos.reduce((soma, { r }) => soma + r.valorRestante, 0);
   const doMes = parcelasDoMes(parcelamentos, hoje.slice(0, 7));
 
-  // prévia: "12 × R$ 100,00"
-  const totalCentavos = converterParaCentavos(valor);
-  const qtd = Number(parcelas);
-  const previa =
-    Number.isFinite(totalCentavos) && totalCentavos > 0 && Number.isInteger(qtd) && qtd >= 1
-      ? `${qtd} × ${formatarMoeda(Math.floor(totalCentavos / qtd))}`
-      : "";
-
-  function aoEnviar(e: FormEvent) {
-    e.preventDefault();
-    setErroForm("");
-
-    if (!descricao.trim()) return setErroForm("Informe o que foi comprado.");
-    if (Number.isNaN(totalCentavos) || totalCentavos <= 0) return setErroForm("Informe o valor total da compra.");
-    if (!Number.isInteger(qtd) || qtd < 1 || qtd > 60) return setErroForm("Parcelas: de 1 a 60.");
-    if (!primeira) return setErroForm("Informe o vencimento da primeira parcela.");
-
-    void onAdicionar({
-      descricao: descricao.trim(),
-      valorTotalEmCentavos: totalCentavos,
-      parcelas: qtd,
-      primeiraParcela: primeira,
-      categoria,
-    });
-
-    setDescricao("");
-    setValor("");
-    setParcelas("12");
-    setCategoria("Outros");
-  }
-
   return (
     <div className="pagina-parcelas">
       <header className="topo">
@@ -76,6 +41,9 @@ export default function PaginaParcelas({ parcelamentos, carregando, erro, onAdic
           <h1>Parcelas</h1>
           <p className="subtitulo">Suas compras parceladas e o que falta pagar</p>
         </div>
+        <button type="button" className="btn-primario btn-nova-parcela" onClick={onAbrirNova}>
+          <Plus size={18} /> Nova compra
+        </button>
       </header>
 
       <section className="cartao" aria-label="Resumo das parcelas">
@@ -166,37 +134,15 @@ export default function PaginaParcelas({ parcelamentos, carregando, erro, onAdic
         )}
       </section>
 
-      <form className="card formulario" onSubmit={aoEnviar}>
-        <h2>Nova compra parcelada</h2>
-        <input placeholder="O que foi comprado" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
-        <input
-          placeholder="Valor total (ex.: 1.200,00)"
-          value={valor}
-          onChange={(e) => setValor(e.target.value)}
-          inputMode="decimal"
+      {novaAberta && (
+        <EditarParcelamento
+          onSalvar={async (dados) => {
+            await onAdicionar(dados);
+            return true;
+          }}
+          onFechar={onFecharNova}
         />
-        <input
-          type="number"
-          min={1}
-          max={60}
-          placeholder="Parcelas"
-          value={parcelas}
-          onChange={(e) => setParcelas(e.target.value)}
-        />
-        <input type="date" value={primeira} onChange={(e) => setPrimeira(e.target.value)} aria-label="Primeira parcela" />
-        <select value={categoria} onChange={(e) => setCategoria(e.target.value as Categoria)}>
-          {CATEGORIAS_DESPESA.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-        {previa && <p className="campo-largo parcela-previa">{previa}</p>}
-        <button type="submit" className="btn-primario">
-          Adicionar
-        </button>
-        {erroForm && <p className="erro">{erroForm}</p>}
-      </form>
+      )}
 
       {editando && (
         <EditarParcelamento

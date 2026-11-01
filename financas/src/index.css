@@ -122,6 +122,8 @@ body {
 }
 .topo h1 { margin: 0; font-size: 1.6rem; }
 .subtitulo { margin: 4px 0 0; color: var(--suave); font-size: 0.9rem; }
+.btn-nova-parcela { display: inline-flex; align-items: center; gap: 6px; }
+@media (max-width: 760px) { .btn-nova-parcela { display: none; } } /* no celular, o "+" da barra faz isso */
 .seletor-mes { display: grid; gap: 4px; font-size: 0.8rem; color: var(--suave); }
 
 /* ===== grades ===== */
@@ -1024,3 +1026,12 @@ body {
   cursor: pointer;
 }
 .btn-tema:hover { border-color: var(--destaque); color: var(--destaque); }
+
+/* parcelas: rodapé e botões de remover não estouram em telas pequenas */
+.parcela-rodape { flex-wrap: wrap; }
+.parcela-rodape > small { flex: 1 1 160px; min-width: 0; }
+.parcela-rodape .item-acoes { flex-wrap: wrap; margin-left: auto; }
+@media (max-width: 560px) {
+  .parcela-rodape .item-acoes { width: 100%; }
+  .parcela-rodape .item-acoes .btn-acao { flex: 1; }
+}

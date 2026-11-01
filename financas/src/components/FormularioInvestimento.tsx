@@ -1,7 +1,7 @@
 import { useState, type FormEvent, type CSSProperties } from "react";
 import type { NovoInvestimento, TipoInvestimento } from "../types/investimento";
 import { hojeISO } from "../utils/datas";
-import { converterParaCentavos } from "../utils/dinheiro";
+import { converterParaCentavos, mascararMoeda } from "../utils/dinheiro";
 import { TIPOS, LISTA_TIPOS } from "../utils/tiposInvestimento";
 
 type Props = { onAdicionar: (dados: NovoInvestimento) => Promise<void> };
@@ -118,7 +118,7 @@ export default function FormularioInvestimento({ onAdicionar }: Props) {
         <input
           inputMode="decimal"
           value={valorInvestido}
-          onChange={(e) => setValorInvestido(e.target.value)}
+          onChange={(e) => setValorInvestido(mascararMoeda(e.target.value))}
           placeholder="Ex.: 1.500,00"
         />
       </label>
@@ -129,7 +129,7 @@ export default function FormularioInvestimento({ onAdicionar }: Props) {
           <input
             inputMode="decimal"
             value={valorAtual}
-            onChange={(e) => setValorAtual(e.target.value)}
+            onChange={(e) => setValorAtual(mascararMoeda(e.target.value))}
             placeholder="Ex.: 1.620,00"
           />
         </label>

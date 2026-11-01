@@ -1,6 +1,6 @@
 import { useState, type FormEvent, type CSSProperties } from "react";
 import type { Transacao, TipoTransacao } from "../types/transacao";
-import { converterParaCentavos } from "../utils/dinheiro";
+import { converterParaCentavos, mascararMoeda } from "../utils/dinheiro";
 import { hojeISO } from "../utils/datas";
 import { CATEGORIA, categoriasDoTipo, type Categoria } from "../utils/categorias";
 
@@ -66,7 +66,7 @@ export default function FormularioTransacao({ onAdicionar }: Props) {
       <input
         placeholder="Valor (ex.: 38,95)"
         value={valor}
-        onChange={(e) => setValor(e.target.value)}
+        onChange={(e) => setValor(mascararMoeda(e.target.value))}
         inputMode="decimal"
       />
       <input type="date" value={data} onChange={(e) => setData(e.target.value)} />

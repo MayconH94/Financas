@@ -53,3 +53,12 @@ export function converterParaCentavos(texto: string): number {
   const centavos = Math.round(numero * 100);
   return centavos > MAX_CENTAVOS ? NaN : centavos;
 }
+
+// Máscara de digitação: "1200,5" -> "1.200,5". Põe os pontos de milhar sozinha,
+// aceita uma única vírgula (até 2 decimais) e descarta espaços e letras.
+export function mascararMoeda(texto: string): string {
+  const limpo = texto.replace(/[^\d,]/g, "");
+  const [inteiro, ...resto] = limpo.split(",");
+  const milhar = inteiro.replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return resto.length ? `${milhar},${resto.join("").slice(0, 2)}` : milhar;
+}

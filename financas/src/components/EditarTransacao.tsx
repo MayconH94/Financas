@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import type { Transacao, TipoTransacao } from "../types/transacao";
-import { converterParaCentavos } from "../utils/dinheiro";
+import { converterParaCentavos, mascararMoeda } from "../utils/dinheiro";
 import { categoriasDoTipo, type Categoria } from "../utils/categorias";
 import Modal from "./Modal";
 
@@ -13,7 +13,7 @@ type Props = {
 };
 
 // 1990 -> "19,90"
-const paraTexto = (centavos: number) => (centavos / 100).toFixed(2).replace(".", ",");
+const paraTexto = (centavos: number) => mascararMoeda((centavos / 100).toFixed(2).replace(".", ","));
 
 export default function EditarTransacao({ transacao, onSalvar, onFechar }: Props) {
   const [tipo, setTipo] = useState<TipoTransacao>(transacao.tipo);
@@ -72,7 +72,7 @@ export default function EditarTransacao({ transacao, onSalvar, onFechar }: Props
         <input
           placeholder="Valor (ex.: 38,95)"
           value={valor}
-          onChange={(e) => setValor(e.target.value)}
+          onChange={(e) => setValor(mascararMoeda(e.target.value))}
           inputMode="decimal"
         />
         <input type="date" value={data} onChange={(e) => setData(e.target.value)} />

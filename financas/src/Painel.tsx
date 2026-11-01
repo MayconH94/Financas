@@ -39,6 +39,7 @@ export default function Painel({ usuario, email, onSair }: Props) {
   const [aba, setAba] = useState<Aba>("visao");
   const [dicaAberta, setDicaAberta] = useState<string | null>(null);
   const [novaAberta, setNovaAberta] = useState(false);
+  const [novaParcelaAberta, setNovaParcelaAberta] = useState(false);
 
   function abrirDica(id: string | null) {
     setDicaAberta(id);
@@ -183,6 +184,9 @@ export default function Painel({ usuario, email, onSair }: Props) {
             onAdicionar={parcelas.adicionar}
             onEditar={parcelas.editar}
             onRemover={parcelas.remover}
+            novaAberta={novaParcelaAberta}
+            onAbrirNova={() => setNovaParcelaAberta(true)}
+            onFecharNova={() => setNovaParcelaAberta(false)}
           />
         )}
 
@@ -197,7 +201,7 @@ export default function Painel({ usuario, email, onSair }: Props) {
         )}
       </main>
 
-      <BarraMobile aba={aba} onAba={setAba} onNova={() => setNovaAberta(true)} />
+      <BarraMobile aba={aba} onAba={setAba} onNova={() => (aba === "parcelas" ? setNovaParcelaAberta(true) : setNovaAberta(true))} />
 
       {novaAberta && (
         <Modal rotulo="Nova transação" onFechar={() => setNovaAberta(false)}>

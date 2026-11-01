@@ -5,7 +5,7 @@ import { ABAS, type Aba } from "../utils/abas";
 type Props = {
   aba: Aba;
   onAba: (aba: Aba) => void;
-  onNova: () => void; // abre o lançamento rápido de transação
+  onNova: () => void; // abre o lançamento rápido (transação, ou compra parcelada na aba Parcelas)
 };
 
 // abas fixas na barra; as demais ficam no menu "Mais"
@@ -44,7 +44,7 @@ export default function BarraMobile({ aba, onAba, onNova }: Props) {
       <nav className="barra-mobile" aria-label="Navegação principal">
         {ESQUERDA.map((id) => botao(id, "barra-item"))}
 
-        <button type="button" className="barra-nova" onClick={onNova} aria-label="Nova transação">
+        <button type="button" className="barra-nova" onClick={onNova} aria-label={aba === "parcelas" ? "Nova compra parcelada" : "Nova transação"}>
           <Plus size={26} />
         </button>
 
